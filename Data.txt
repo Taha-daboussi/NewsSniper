@@ -1,0 +1,263 @@
+{
+  "success": true,
+  "data": {
+    "total_pages": 196,
+    "total_count": 3911,
+    "notices": [
+      {
+        "listed_at": "2024-08-20T16:37:46+09:00",
+        "first_listed_at": "2024-08-20T16:37:46+09:00",
+        "id": 4444,
+        "title": "Market Support for Brett(BRETT), Pepe(PEPE) (USDT Market)",
+        "category": "Trade",
+        "need_new_badge": true,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-20T14:09:07+09:00",
+        "first_listed_at": "2024-08-20T14:09:07+09:00",
+        "id": 4443,
+        "title": "Upbit NFT Improvement: Adding NFT Calendar Function and Supporting New NFT Trading, Expanding NFT-related Information Display Area",
+        "category": "NFT",
+        "need_new_badge": true,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-19T18:38:37+09:00",
+        "first_listed_at": "2024-08-19T18:38:37+09:00",
+        "id": 4442,
+        "title": "Notice on Circulation Supply Distribution Schedule: Aethir",
+        "category": "Digital Asset",
+        "need_new_badge": true,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-19T18:23:06+09:00",
+        "first_listed_at": "2024-08-12T19:00:01+09:00",
+        "id": 4430,
+        "title": "USDT Market Maintenance (Additional Maintenance)",
+        "category": "Maintenance",
+        "need_new_badge": false,
+        "need_update_badge": true
+      },
+      {
+        "listed_at": "2024-08-19T16:15:21+09:00",
+        "first_listed_at": "2024-08-19T16:15:21+09:00",
+        "id": 4441,
+        "title": "GAS/VTHO Distribution for the 3rd week of August, 2024",
+        "category": "Digital Asset",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-19T14:50:31+09:00",
+        "first_listed_at": "2024-08-19T14:50:31+09:00",
+        "id": 4440,
+        "title": "Temporary Suspension of Cosmos(ATOM) Deposits/Withdrawals due to Network Upgrade (08/21 18:00 ~)",
+        "category": "D/W",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-19T14:46:51+09:00",
+        "first_listed_at": "2024-08-19T14:46:51+09:00",
+        "id": 4439,
+        "title": "Temporary suspension of Deposit/Withdrawal service for INJ due to Network Transition (8/23 11:00 ~)",
+        "category": "D/W",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-16T18:46:44+09:00",
+        "first_listed_at": "2024-08-16T18:46:44+09:00",
+        "id": 4437,
+        "title": "Resumption of Deposit and Withdrawal Services after Render Token(RENDER) Rebranding and Token Swap Completion",
+        "category": "D/W",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-16T17:00:00+09:00",
+        "first_listed_at": "2024-08-16T17:00:00+09:00",
+        "id": 4436,
+        "title": "Temporary Trading Fee Discount for USDT Market (19 Aug ~)",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-16T15:38:26+09:00",
+        "first_listed_at": "2024-08-16T15:38:26+09:00",
+        "id": 4435,
+        "title": "Liberation Day Commemoration Artist LayLay's NFT Holder Member-targeted Taegukgi NFT Airdrop Event",
+        "category": "NFT",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-16T15:07:37+09:00",
+        "first_listed_at": "2024-08-09T18:44:18+09:00",
+        "id": 4426,
+        "title": "Rebranding and Token Swap : Suspension of deposits/withdrawals and trading for Render Token(RNDR) (Update)",
+        "category": "Digital Asset",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-14T11:21:07+09:00",
+        "first_listed_at": "2024-08-14T11:21:07+09:00",
+        "id": 4434,
+        "title": "Market Support for Aethir(ATH) (KRW, BTC Market)",
+        "category": "Trade",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-13T18:52:32+09:00",
+        "first_listed_at": "2024-08-13T18:52:32+09:00",
+        "id": 4433,
+        "title": "Upbit NFT x The Sandbox 'Solo Leveling' Avatar Sale and Commemorative Event",
+        "category": "NFT",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-13T17:08:18+09:00",
+        "first_listed_at": "2024-08-13T17:08:18+09:00",
+        "id": 4432,
+        "title": "Master Kang Hyeong-gu, who paints portraits of the NFT era, drops a portrait of Doctor Ahn Jung-geun to commemorate National Liberation Day (Winners Announcement)",
+        "category": "NFT",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-13T16:13:31+09:00",
+        "first_listed_at": "2024-08-13T16:13:31+09:00",
+        "id": 4431,
+        "title": "Upbit Recurring Buy Service Launch",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-12T16:53:57+09:00",
+        "first_listed_at": "2024-08-12T16:53:57+09:00",
+        "id": 4429,
+        "title": "Artist Sim Ju-ha's Drops, perfomer of the 7th Episode of the <No money No Art> competition who sends comfort through the paintings of rose of Sharon (2nd Round)",
+        "category": "NFT",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-12T16:16:36+09:00",
+        "first_listed_at": "2024-08-12T16:16:36+09:00",
+        "id": 4428,
+        "title": "Notice on Identity Card Verification Service Center Maintenance (08/12 19:00 ~)",
+        "category": "Maintenance",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-12T14:42:15+09:00",
+        "first_listed_at": "2024-08-02T18:36:54+09:00",
+        "id": 4414,
+        "title": "Temporary Suspension of ELF Deposits/Withdrawals due to Network Upgrade (Completed)",
+        "category": "D/W",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-12T13:36:03+09:00",
+        "first_listed_at": "2024-08-12T13:36:03+09:00",
+        "id": 4427,
+        "title": "GAS/VTHO Distribution for the 2nd week of August, 2024",
+        "category": "Digital Asset",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-08-09T20:45:01+09:00",
+        "first_listed_at": "2024-08-08T23:45:46+09:00",
+        "id": 4424,
+        "title": "Temporary suspension of Deposit/Withdrawal service for ASTR due to Network Issue (Completed)",
+        "category": "D/W",
+        "need_new_badge": false,
+        "need_update_badge": false
+      }
+    ],
+    "fixed_notices": [
+      {
+        "listed_at": "2024-06-07T19:21:29+09:00",
+        "first_listed_at": "2024-06-07T19:21:29+09:00",
+        "id": 4276,
+        "title": "Notice on Phishing Email Scams Targeting Issuers of Virtual Assets - Impersonation of Financial Supervisory Service Virtual Asset Inspection Team",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-05-17T16:59:19+09:00",
+        "first_listed_at": "2024-05-17T16:59:19+09:00",
+        "id": 4219,
+        "title": "Guide to phishing text scam - Type of scam using the pretext of notifying users about the disposal of remaining digital assets in long-term inactive or dormant accounts",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2024-03-20T16:43:52+09:00",
+        "first_listed_at": "2024-03-20T16:43:52+09:00",
+        "id": 4118,
+        "title": "Cautionary Notice for Investment Scams Using Fake Cryptocurrency Exchanges",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2022-08-25T20:00:02+09:00",
+        "first_listed_at": "2022-08-25T20:00:02+09:00",
+        "id": 2895,
+        "title": "Restrictions and Precautions for Deposits/Withdrawals with Unreported VASPs According to Act on Reporting and Using Specified Financial Transaction Information (Added on 2023.07.19)",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2022-05-20T12:28:19+09:00",
+        "first_listed_at": "2022-05-20T12:28:19+09:00",
+        "id": 2677,
+        "title": "Warning and Risks on Digital Asset Trading",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2022-05-18T22:10:10+09:00",
+        "first_listed_at": "2022-05-18T22:10:10+09:00",
+        "id": 2672,
+        "title": "Warning about Investing in Algorithmic Stablecoins and Related Digital Assets (Updated)",
+        "category": "Trade",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2022-03-29T19:45:41+09:00",
+        "first_listed_at": "2022-03-29T19:45:41+09:00",
+        "id": 2553,
+        "title": "Precautions for Deposits/withdrawals under the Travel Rule Implementation",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      },
+      {
+        "listed_at": "2022-01-20T14:48:56+09:00",
+        "first_listed_at": "2022-01-20T14:48:56+09:00",
+        "id": 2397,
+        "title": "Precautions on Incorrect Deposits of Digital Assets",
+        "category": "Notice",
+        "need_new_badge": false,
+        "need_update_badge": false
+      }
+    ]
+  }
+}
