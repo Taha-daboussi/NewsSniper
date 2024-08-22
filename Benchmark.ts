@@ -12,20 +12,20 @@ async function benchmarkRequests() {
         android: []
     };
 
-    const iterations = 500;
+    const iterations = 200;
 
     for (let i = 0; i < iterations; i++) {
         Utils.log(`Benchmark iteration ${i + 1} of ${iterations}`, 'info');
         
         const results = await frontendRequests.getNews();
 
-        results.forEach(result => {
-            if (result) {
-                // result.delay contains the request duration in milliseconds
-                benchmarkResults[result.os].push(result.delay);
-            }
-        });
-        await Utils.sleep(2000)
+        // results.forEach((result:any) => {
+        //     if (result) {
+        //         // result.delay contains the request duration in milliseconds
+        //         benchmarkResults[result.os].push(result.delay);
+        //     }
+        // });
+        // await Utils.sleep(2000)
     }
 
     // Calculate average times for each os

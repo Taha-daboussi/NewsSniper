@@ -10,11 +10,10 @@ export interface IFrontendRequest {
     need_new_badge: boolean
     need_update_badge: boolean
     delay: number
-    os: string
-    userAgnet: string
-  }
+    cacheStatus: string
+}
 
-  
+
 export interface IAnnouncment {
     success: boolean
     data: Data
@@ -54,8 +53,10 @@ export class FrontendRequests {
         this.Main = Main
     }
 
-    async run(){
+    async run() {
         const getAnnouncments = await this.getNews();
+        return getAnnouncments
+        Utils.log(JSON.stringify(getAnnouncments))
     }
 
 
@@ -72,64 +73,58 @@ export class FrontendRequests {
         return latestList;
     }
 
-    async getNews():Promise<Array<IFrontendRequest>> {
+    async getNews(): Promise<IFrontendRequest> {
         const osList = ['web', 'ios', 'android'];
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
 
         // Create an array of promises for all the requests
-        const requests = osList.map(async os => {
-            const url = `https://api-manager.upbit.com/api/v1/announcements?os=${os}&page=1&per_page=20&category=all`;
-            const userAgent = userAgents[os];
-            const userAgentData = Utils.parseUserAgent(userAgent);
-            Utils.log(`Getting frontend announcements using Os: ${os} UserAgent: ${userAgent}`, "pending");
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all`;
+        const userAgent = userAgents["web"];
+        const userAgentData = Utils.parseUserAgent(userAgent);
+        Utils.log(`Getting frontend announcements `, "pending");
 
-            const headers = {
-                Connection: 'keep-alive',
-                'sec-ch-ua': userAgentData["sec-ch-ua"],
-                'sec-ch-ua-mobile': userAgentData['sec-ch-ua-mobile'],
-                'sec-ch-ua-platform': userAgentData['sec-ch-ua-platform'],
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent': userAgent,
-                Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                'Sec-Fetch-Site': 'none',
-                'Sec-Fetch-Mode': 'navigate',
-                'Sec-Fetch-User': '?1',
-                'Sec-Fetch-Dest': 'document',
-                'Accept-Encoding': 'gzip, deflate, br, zstd',
-                'Accept-Language': 'en-US,en;q=0.9'
-            };
+        const headers = {
+            Connection: 'keep-alive',
+            'sec-ch-ua': userAgentData["sec-ch-ua"],
+            'sec-ch-ua-mobile': userAgentData['sec-ch-ua-mobile'],
+            'sec-ch-ua-platform': userAgentData['sec-ch-ua-platform'],
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': userAgent,
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-User': '?1',
+            'Sec-Fetch-Dest': 'document',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'Accept-Language': 'en-US,en;q=0.9'
+        };
 
-            const payload = {
-                Url: url,
-                method: "GET",
-                headers
-            };
+        const payload = {
+            Url: url,
+            method: "GET",
+            headers
+        };
 
-            try {
-                const startTime = Date.now();  // Record the start time
-                const response = await this.Main.GoClient.sendRequest(payload);
-                const endTime = Date.now();  // Record the end time
+        try {
+            const startTime = Date.now();  // Record the start time
+            const response = await this.Main.GoClient.sendRequest(payload);
+            const endTime = Date.now();  // Record the end time
 
-                if (response && response.body && response.body.success) {
-                    const duration = endTime - startTime;  // Calculate the duration
-                    const data = response.body.data
-                    Utils.log(`Got Frontend announcements using os: ${os} UserAgent: ${userAgent} ` + "Response Time : " + duration + " ms", "success");
+            if (response && response.body && response.body.success) {
+                const duration = endTime - startTime;  // Calculate the duration
+                const data = response.body.data
+                Utils.log(`Got Frontend announcements UserAgent: ${userAgent} ` + "Response Time : " + duration + " ms", "success");
+                const latestData = this.parseNews(data)
 
-                    const latestData = this.parseNews(data) 
-                    return {...latestData , delay : duration , os , userAgent}
-                }
-            } catch (err) {
-                Utils.log('Failed to Get Frontend announcments using os: ' + os + " UserAgent: " + userAgent , 'error' )
-      
+                Utils.log("My Cache Status : " + response.headers['Cf-Cache-Status'] )
+
+                return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] }
             }
-        });
-
-        // Wait for all requests to complete
-        const results = await Promise.all(requests);
-
-        // Filter out any null results and return the collected data
-        return results.filter(result => result !== null) as any ;
+            throw new Error(JSON.stringify(response.body))
+        } catch (err) {
+            Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
+            await Utils.sleep();
+            return this.getNews();
+        }
     }
-
-
 }
