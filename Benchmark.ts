@@ -13,38 +13,23 @@ async function benchmarkRequests() {
     };
 
     const iterations = 200;
-
+    let DateMedian = 0
     for (let i = 0; i < iterations; i++) {
-        Utils.log(`Benchmark iteration ${i + 1} of ${iterations}`, 'info');
+        i %50 == 0 ? Utils.log(`Benchmark iteration ${i + 1} of ${iterations}`, 'info') : ''
         
         const results = await frontendRequests.getNews();
-
-        // results.forEach((result:any) => {
-        //     if (result) {
-        //         // result.delay contains the request duration in milliseconds
-        //         benchmarkResults[result.os].push(result.delay);
-        //     }
-        // });
-        // await Utils.sleep(2000)
+        DateMedian= DateMedian + Number(results.delay)
+        await Utils.sleep(100)
+       
     }
+    Utils.log('BenchmarkMedia : ' + DateMedian/iterations)
 
-    // Calculate average times for each os
-    const averageTimes = Object.keys(benchmarkResults).reduce((acc, os) => {
-        const times = benchmarkResults[os];
-        const average = times.reduce((sum, time) => sum + time, 0) / times.length;
-        acc[os] = average;
-        return acc;
-    }, {} as Record<string, number>);
-
-    Utils.log('Benchmark Results:', 'info');
-    Utils.log(`Average time for web: ${averageTimes['web']} ms`, 'info');
-    Utils.log(`Average time for ios: ${averageTimes['ios']} ms`, 'info');
-    Utils.log(`Average time for android: ${averageTimes['android']} ms`, 'info');
 }
 
 // Run the benchmark
 benchmarkRequests().then(() => {
     Utils.log('Benchmarking completed.', 'success');
+    process.exit()
 }).catch(err => {
     Utils.log(`Benchmarking failed: ${err.message}`, 'error');
 });
