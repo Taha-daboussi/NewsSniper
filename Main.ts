@@ -30,4 +30,4 @@ export class Main extends MainHelper {
         return myConfig
     }
 }
-new Main().run()
+// new Main().run()

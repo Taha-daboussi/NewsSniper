@@ -18,7 +18,7 @@ export class DiscordHelpers {
     static async sendWebhook(webhookUrl: string, params: Record<any, any>) {
         axios.post(webhookUrl, params, {
             headers: { 'Content-type': 'application/json' }
-        }).catch(async err => {
+        }).catch(async (err:any) => {
             Utils.log('Failed to send webhook ' + err)
             await Utils.sleep(3000)
             return this.sendWebhook(webhookUrl, params)
