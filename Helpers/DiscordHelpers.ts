@@ -10,6 +10,7 @@ export interface Root {
     need_update_badge: boolean
     delay: number
     cacheStatus: string[]
+    skipBypass : boolean
   }
 
   
@@ -52,9 +53,13 @@ export class DiscordHelpers {
                             inline: true,
                         },{
                             name: 'Cache Status',
-                            value: JSON.stringify(data.cacheStatus),
+                            value: JSON.stringify(data.cacheStatus[0]),
                             inline: true,
-                        },
+                        },{
+                            name : "isUsingBypass",
+                            value : (!data.skipBypass).toString(),
+                            inline : true 
+                        }
                     ],
                     footer: {
                         text: 'News Monitor',
@@ -62,6 +67,30 @@ export class DiscordHelpers {
 
                     },
                     timestamp: new Date().toISOString(), // Include a timestamp
+                },
+            ],
+        };
+        return params
+    }
+
+    static buildErrorWebhookParams(err:string){
+        const params = {
+            username: 'Error',
+            content: "Error  ||@everyone||",  // This will mention everyone
+            avatar_url:'https://media.discordapp.net/attachments/821005392418308147/1053588940621348914/Capture.PNG',
+            embeds: [
+                {
+                    title: 'Contract',
+                    description: 'Up Bit Announcment Error',
+                    color: 0 || '0',
+                    fields: [
+                     
+                        {
+                            name: 'ERROR',
+                            value: err || '0',
+                            inline: true,
+                        },
+                    ],
                 },
             ],
         };

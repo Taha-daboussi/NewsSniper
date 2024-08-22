@@ -1,3 +1,4 @@
+import { DiscordHelpers } from "../Helpers/DiscordHelpers";
 import { Utils } from "../Helpers/Utils";
 import { Main } from "../Main";
 
@@ -11,6 +12,7 @@ export interface IFrontendRequest {
     need_update_badge: boolean
     delay: number
     cacheStatus: string
+    skipBypass : boolean
 }
 
 
@@ -55,11 +57,7 @@ export class FrontendRequests {
         this.Main = Main
     }
 
-    async run() {
-        const getAnnouncments = await this.getNews();
-        return getAnnouncments
-        Utils.log(JSON.stringify(getAnnouncments))
-    }
+
 
 
 
@@ -75,15 +73,13 @@ export class FrontendRequests {
         return latestList;
     }
 
-    async getNews(): Promise<IFrontendRequest> {
-        const osList = ['web', 'ios', 'android'];
+    async getNews(skipBypass = false): Promise<IFrontendRequest> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
-
         // Create an array of promises for all the requests
-        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all&bypass-cf-cache=` + Math.random();
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all`+ (skipBypass ? "" : `&bypass-cf-cache=` + Math.random())
         const userAgent = userAgents["web"];
         const userAgentData = Utils.parseUserAgent(userAgent);
-        Utils.log(`Getting frontend announcements `, "pending");
+        Utils.log(`Getting frontend announcements || skipBypass : ` + skipBypass, "pending");
 
         const headers = {
             Connection: 'keep-alive',
@@ -121,16 +117,16 @@ export class FrontendRequests {
             if (response && response.body && response.body.success) {
                 const duration = endTime - startTime;  // Calculate the duration
                 const data = response.body.data
-                Utils.log(`Got Frontend announcements UserAgent: ${userAgent} ` + "Response Time : " + duration + " ms", "success");
+                Utils.log(`Got Frontend announcements ` + " Response Time : " + duration + " MS" + " || skipBypass : " + skipBypass + " || Cache Status : " + response.headers['Cf-Cache-Status'][0] , "success");
                 const latestData = this.parseNews(data)
-
-                Utils.log("My Cache Status : " + response.headers['Cf-Cache-Status'] )
                 this.buildCacheStats(response.headers['Cf-Cache-Status'][0])
-                return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] }
+                return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] , skipBypass }
             }
             throw new Error(JSON.stringify(response.body))
-        } catch (err) {
+        } catch (err : any ) {
             Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
+            const params = DiscordHelpers.buildErrorWebhookParams(err.message)
+            // DiscordHelpers.sendWebhook(this.Main.Config.DiscordWebhook,params)
             await Utils.sleep();
             return this.getNews();
         }
