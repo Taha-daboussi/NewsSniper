@@ -49,6 +49,8 @@ export interface FixedNotice {
 
 export class FrontendRequests {
     Main: Main;
+    CacheStats  :any = {revalidated : 0 ,hit : 0}
+    counter: number = 0;
     constructor(Main: Main) {
         this.Main = Main
     }
@@ -78,7 +80,7 @@ export class FrontendRequests {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
 
         // Create an array of promises for all the requests
-        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all`;
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all&bypass-cf-cache=` + Math.random();
         const userAgent = userAgents["web"];
         const userAgentData = Utils.parseUserAgent(userAgent);
         Utils.log(`Getting frontend announcements `, "pending");
@@ -96,7 +98,13 @@ export class FrontendRequests {
             'Sec-Fetch-User': '?1',
             'Sec-Fetch-Dest': 'document',
             'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Accept-Language': 'en-US,en;q=0.9'
+            'Accept-Language': 'en-US,en;q=0.9',
+            "Cache-Control" : "no-cache, no-store, must-revalidate",
+            "Pragma":"no-cache",
+            "Expires" : "0",
+            "bypass-cloudflare-cache" : 'true' 
+
+
         };
 
         const payload = {
@@ -117,7 +125,7 @@ export class FrontendRequests {
                 const latestData = this.parseNews(data)
 
                 Utils.log("My Cache Status : " + response.headers['Cf-Cache-Status'] )
-
+                this.buildCacheStats(response.headers['Cf-Cache-Status'][0])
                 return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] }
             }
             throw new Error(JSON.stringify(response.body))
@@ -125,6 +133,24 @@ export class FrontendRequests {
             Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
             await Utils.sleep();
             return this.getNews();
+        }
+    }
+
+    buildCacheStats(cacheStatus : string ){
+        if(cacheStatus === 'REVALIDATED'){
+            this.CacheStats.revalidated++
+        }else if(cacheStatus ==="HIT"){
+            this.CacheStats.hit++
+        }else{
+            if(!this.CacheStats[cacheStatus]){
+                this.CacheStats[cacheStatus]=0
+            }
+            this.CacheStats[cacheStatus]++
+        }
+        this.counter ++
+        if(this.counter >10){
+        Utils.log(JSON.stringify(this.CacheStats));
+        this.counter = 0
         }
     }
 }
