@@ -45,9 +45,8 @@ export class GoClient implements IGoClient {
         try {
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy)
                 requestPayloadData.sessionId = requestPayloadData.proxy.toString();
-            const mySessionId = requestPayloadData.sessionId ? requestPayloadData.sessionId : Math.random().toString(36).substring(2, 7)
 
-            const mySelectedProxy = this.Proxy.getMyProxy(this.proxyFile || myProxyFile, mySessionId);
+            const mySelectedProxy = this.Proxy.getMyProxy(this.proxyFile || myProxyFile);
             if (mySelectedProxy) requestPayloadData.proxy = mySelectedProxy
 
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy) requestPayloadData.sessionId = requestPayloadData.proxy.toString()

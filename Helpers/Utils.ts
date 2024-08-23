@@ -1,17 +1,17 @@
 import fs from 'fs';
 export class Utils {
-    static log(message: string , type: 'success' | 'error' | 'info' | 'pending' = 'info'): void {
+    static log(message: string, type: 'success' | 'error' | 'info' | 'pending' = 'info'): void {
         const timestamp = new Date().toISOString();
         let logMessage = `[${type.toUpperCase()}] [${timestamp}] ${message}`;
-        fs.appendFileSync(process.cwd() + "\\JDatabase\\logs.txt" , logMessage + "\n")
+        fs.appendFileSync(process.cwd() + "\\JDatabase\\logs.txt", logMessage + "\n")
 
         if (type.toLowerCase() === 'success') {
             logMessage = `\x1b[32m${logMessage}\x1b[0m`; // Green color
         } else if (type.toLowerCase() === 'error') {
             logMessage = `\x1b[31m${logMessage}\x1b[0m`; // Red color
-        } else if(type.toLowerCase() === "info"){
+        } else if (type.toLowerCase() === "info") {
             logMessage = `\x1b[34m${logMessage}\x1b[0m`; // Blue color
-        } else if(type.toLowerCase() === "pending"){
+        } else if (type.toLowerCase() === "pending") {
             logMessage = `\x1b[33m${logMessage}\x1b[0m`; // Yellow color
         }
         console.log(logMessage);
@@ -64,6 +64,14 @@ export class Utils {
             'sec-ch-ua-mobile': secChUaMobile,
             'sec-ch-ua-platform': secChUaPlatform
         };
+    }
+
+    static shuffle(array: any[]) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
 

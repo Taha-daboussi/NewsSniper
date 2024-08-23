@@ -66,25 +66,19 @@ export class Proxy implements IProxy {
      * @param sessionId The session ID
      * @returns The proxy
      */
-    getMyProxy(myProxyFile: string, sessionId?: string) {
-        let gotProxies;
+    getMyProxy(myProxyFile: string) {
         if (myProxyFile) {
-            if (!this.myProxies) {
-                gotProxies = this.getMyProxyArray();
-            }
+            if (!this.myProxies) this.getMyProxyArray();
             if (this.myProxies.length > 0) {
-                if (sessionId && this.sessionProxyMap.has(sessionId)) {
-                    return this.sessionProxyMap.get(sessionId);
-                } else {
-                    let assignedProxy;
-                    if (this.isSequentialProxyMethod) {
-                        assignedProxy = this.getProxiesSequentially();
-                    } else {
-                        assignedProxy = this.getRandomProxies();
-                    }
+                    const assignedProxy = this.getProxiesSequentially();
                     return assignedProxy
-                }
             }
         }
     }
+
+    
+
+  
+
+
 }
