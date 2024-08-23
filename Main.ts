@@ -34,7 +34,7 @@ export class Main extends MainHelper {
     }
 
     async runIdMode(){
-        let latestAnnouncementId = 4450
+        let latestAnnouncementId = 4451
         while(true){
             const requests = Array(20).fill(null).map(() => this.IDModeRequests.getNews(latestAnnouncementId));
             // Process the first response as soon as it finishes and return the result of first request promise 
