@@ -77,5 +77,5 @@ export class Main extends MainHelper {
 
 
 }
-new Main().runFrontendMode()
+// new Main().runFrontendMode()
 new Main().runIdMode()

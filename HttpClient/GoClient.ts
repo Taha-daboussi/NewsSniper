@@ -64,8 +64,8 @@ export class GoClient implements IGoClient {
                   console.error('Invalid URL:', forcedProxy);
                 }
               }
-            const raw = {
-                sessionId: requestPayloadData.sessionId ? requestPayloadData.sessionId : Math.random().toString(36).substring(2, 7),
+              const raw = {
+                sessionId: requestPayloadData.proxy?.toString(),
                 proxyUrl: requestPayloadData.proxy,
                 certificatePinningHosts: {},
                 headers: requestPayloadData.headers,
