@@ -116,7 +116,7 @@ export class FrontendRequests {
         } catch (err : any ) {
             Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
             const params = DiscordHelpers.buildErrorWebhookParams(err.message)
-            DiscordHelpers.sendWebhook(this.Main.Config.DiscordWebhook,params)
+            DiscordHelpers.sendWebhook(this.Main.Config.ErrorWebhook,params)
             await Utils.sleep();
             return this.getNews();
         }
