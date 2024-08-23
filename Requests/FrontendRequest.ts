@@ -68,8 +68,8 @@ export class FrontendRequests {
     }
 
     parseNews(announcmentsData: IAnnouncment["data"]) {
-        const tradeAnnouncments = announcmentsData.notices.filter(res => res.category === "Trade" && res.title.includes('Market Support'));
-        const latestList = this.getLatestListedAt(tradeAnnouncments);
+        // const tradeAnnouncments = announcmentsData.notices.filter(res => res.category === "Trade" && res.title.includes('Market Support'));
+        const latestList = this.getLatestListedAt(announcmentsData.notices);
         return latestList;
     }
 
