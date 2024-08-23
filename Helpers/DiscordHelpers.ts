@@ -80,7 +80,7 @@ export class DiscordHelpers {
     static buildErrorWebhookParams(err:string){
         const params = {
             username: 'Error',
-            content: "Error  ||@everyone||",  // This will mention everyone
+            content: "Error",  // This will mention everyone
             avatar_url:'https://media.discordapp.net/attachments/821005392418308147/1053588940621348914/Capture.PNG',
             embeds: [
                 {
