@@ -27,12 +27,12 @@ export class DiscordHelpers {
     }
 
   
-    static buildWebhookParams(data : Root){
+    static buildWebhookParams(data : Root , Mode = "Frontend"){
         const color = 0x00FF00; // Use hexadecimal color value
         const params = {
             username: 'News Monitor',
             avatar_url: 'https://media.discordapp.net/attachments/821005430020112394/1248392874802810921/kdKdGsgM_400x400.png?ex=66637ff7&is=66622e77&hm=a06e0383793cfb727738cfb0ae4fce350b28ea089ed8c104daba4e069e8d82c6&=&format=webp&quality=lossless',
-
+            content: "||@everyone||",  // This will mention everyone
             embeds: [
                 {
                     title: 'New Listing Catched',
@@ -58,6 +58,10 @@ export class DiscordHelpers {
                         },{
                             name : "isUsingBypass",
                             value : (!data.skipBypass).toString(),
+                            inline : true 
+                        },{
+                            name : "Mode",
+                            value : Mode,
                             inline : true 
                         }
                     ],
