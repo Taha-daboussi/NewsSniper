@@ -76,30 +76,20 @@ export class FrontendRequests {
     async getNews(skipBypass = false): Promise<IFrontendRequest> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         // Create an array of promises for all the requests
-        const url = `https://api-manager.upbit.com/api/v1/announcements?os=web&page=1&per_page=20&category=all`+ (skipBypass ? "" : `&bypass-cf-cache=` + Math.random())
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=ios&page=1&per_page=20&category=all`+ (skipBypass ? "" : `&bypass-cf-cache=` + Math.random())
         const userAgent = userAgents["web"];
         const userAgentData = Utils.parseUserAgent(userAgent);
         Utils.log(`Getting frontend announcements || skipBypass : ` + skipBypass, "pending");
 
         const headers = {
-            Connection: 'keep-alive',
-            'sec-ch-ua': userAgentData["sec-ch-ua"],
-            'sec-ch-ua-mobile': userAgentData['sec-ch-ua-mobile'],
-            'sec-ch-ua-platform': userAgentData['sec-ch-ua-platform'],
-            'Upgrade-Insecure-Requests': '1',
-            'User-Agent': userAgent,
-            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-User': '?1',
-            'Sec-Fetch-Dest': 'document',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Accept-Language': 'en-US,en;q=0.9',
-            "Cache-Control" : "no-cache, no-store, must-revalidate",
-            "Pragma":"no-cache",
-            "Expires" : "0",
-            "bypass-cloudflare-cache" : 'true' 
-
+            "Host": "api-manager.upbit.com",
+            "Cookie": "__cf_bm=8p_5YQ3dmJp7XC42y774_s9Sq7d4z3CADIiBd3Adlwo-1723905842-1.0.1.1-MVa.1qS3HrfvnhnONNkzzjih7JvNZebr98YReO.U1h4D2.zUHF2v8Uqtg8J0YwttJYhD10O.9ahW3rke6jGWyQ; _ga_06DYP5R5CN=GS1.1.1711562142.4.1.1711563184.60.0.0; amplitude_id_5f3aa052f4cc92657d57c39eba45a896_totalupbit.com=eyJkZXZpY2VJZCI6IjhlMjMyZGIzLWNiOWQtNDQ5Mi1hMGU2LTc2MGIzMDFlZjhhZFIiLCJ1c2VySWQiOm51bGwsIm9wdE91dCI6ZmFsc2UsInNlc3Npb25JZCI6MTcxMTU2MjE0MTU5NiwibGFzdEV2ZW50VGltZSI6MTcxMTU2MzExNjY5OCwiZXZlbnRJZCI6MzAsImlkZW50aWZ5SWQiOjAsInNlcXVlbmNlTnVtYmVyIjozMH0=; _ga=GA1.1.115337781.1711130117; _ga_LKK0Q2MJXC=GS1.1.1711559032.1.1.1711559044.0.0.0; amplitude_id_35ad0ef42657135fc6ef8150911e5dea_totalupbit.com=eyJkZXZpY2VJZCI6IjA1ZmM5ZTFlLWIxYTEtNDY2NC04MzgzLTUxYmM2MzUwNDJiZVIiLCJ1c2VySWQiOm51bGwsIm9wdE91dCI6ZmFsc2UsInNlc3Npb25JZCI6MTcxMTU1OTAzMTQzOSwibGFzdEV2ZW50VGltZSI6MTcxMTU1OTAzMTQzOSwiZXZlbnRJZCI6MCwiaWRlbnRpZnlJZCI6MSwic2VxdWVuY2VOdW1iZXIiOjF9",
+            "accept": "*/*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJub25jZSI6MTcyMzkwNjIyMjkyNCwiYWNjZXNzX2tleSI6InZ3bDVleHVDc3g1djJJSjBtZHhMT2hUdk5qYUJsb1liNUdHOGljU0kiLCJkZXZpY2VfaWQiOiI3Njc5MzExNS1BQzQwLTQ1MTUtQTc2Ny01MURDOEYwQzdCNzEifQ.4Ch2__28aKboZ8Lp3mEkawqcMlTJAvAnaozy9UdX39o",
+            "upbit-platform": "iOS",
+            "user-agent": "Upbit-iOS/1.27.17 (com.dunamu.upbit; build:1.27.17; iOS 16.3.1; iPhone13,1) Alamofire/5.9.0",
+            "accept-language": "ko-KR, ko;q=1, en;q=0.1",
+            "cache-control": "no-store"
 
         };
 
