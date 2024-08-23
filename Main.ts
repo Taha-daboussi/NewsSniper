@@ -31,7 +31,6 @@ export class Main extends MainHelper {
             if (newListingSecond && newListingSecond.title !== this.LatestListing.title) {
                 this.newListingAlert(newListingFirst)
             }
-            await Utils.sleep(1000);
         }
         
     }
