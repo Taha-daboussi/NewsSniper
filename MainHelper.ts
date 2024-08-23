@@ -1,3 +1,5 @@
+import fs from 'fs'
+import { Utils } from './Helpers/Utils'
 export class MainHelper {
 
     getUserAgents(){
@@ -8,6 +10,13 @@ export class MainHelper {
             "mobile" : "Upbit-iOS/1.27.17 (com.dunamu.upbit; build:1.27.17; iOS 16.3.1; iPhone13,1) Alamofire/5.9.0"
         }
         return userAgnets
+    }
+
+    shuffleProxyOrder(){
+        const path = "\\JDatabase\\Proxy.txt"
+        const myProxies = fs.readFileSync(process.cwd() + path, 'utf-8').split('\r\n')
+        const shuffledProxies = Utils.shuffle(myProxies);
+        fs.writeFileSync(process.cwd() + path, shuffledProxies.join('\r\n'), 'utf-8');
     }
 
 }

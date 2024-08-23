@@ -13,6 +13,8 @@ export class Main extends MainHelper {
     Config = this.getConfig();
     index = 0
     async runFrontendMode(){
+        this.shuffleProxyOrder()
+
         while (true) {
             const requests = [this.FrontendRequests.getNews(),this.FrontendRequests.getNews(true)];
             // Process the first response as soon as it finishes and return the result of first request promise 
@@ -35,8 +37,10 @@ export class Main extends MainHelper {
 
     async runIdMode(){
         let latestAnnouncementId = 4451
+        this.shuffleProxyOrder()
+
         while(true){
-            const requests = Array(20).fill(null).map(() => this.IDModeRequests.getNews(latestAnnouncementId));
+            const requests = Array(1).fill(null).map(() => this.IDModeRequests.getNews(latestAnnouncementId));
             // Process the first response as soon as it finishes and return the result of first request promise 
             const firstResolved = await Promise.race(requests.map(p => p.then(data => ({ resolved: true, data })) .catch(error => ({ resolved: false, error })))) as { resolved: boolean, data?: any, error?: any };
 
