@@ -32,33 +32,30 @@ export class Main extends MainHelper {
             if (newListingSecond && newListingSecond.title !== this.LatestListing.title) {
                 this.newListingAlert(newListingFirst)
             }
+            Utils.sleep(200)
         }
     }
 
     async runIdMode(){
-        let latestAnnouncementId = 4451
+        let latestAnnouncementId = 4452
         this.shuffleProxyOrder()
-
         while(true){
-            const requests = Array(1).fill(null).map(() => this.IDModeRequests.getNews(latestAnnouncementId));
             // Process the first response as soon as it finishes and return the result of first request promise 
-            const firstResolved = await Promise.race(requests.map(p => p.then(data => ({ resolved: true, data })) .catch(error => ({ resolved: false, error })))) as { resolved: boolean, data?: any, error?: any };
-
-            if (!firstResolved.resolved) {
-                Utils.log("Request failed: " + JSON.stringify(firstResolved.error));
-                continue;
-            }
-        
-            if(firstResolved.data.success === false){
-                Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved.data)));
-                continue;
-            }else if(firstResolved.data.title ){
-                Utils.log('New Listing Found : ' + JSON.stringify(firstResolved.data) + " Response Time : " + firstResolved.data.delay + " MS" + " || skipBypass : " + firstResolved.data.skipBypass + " || Cache Status : " + firstResolved.data.cacheStatus  , 'success')
-                const params = DiscordHelpers.buildWebhookParams(firstResolved.data,"IDMode");
+            const firstResolved = await this.IDModeRequests.getNews(latestAnnouncementId) as any 
+            if(firstResolved.success === false){
+                Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
+            }else if(firstResolved.title ){
+                Utils.log('New Listing Found : ' + firstResolved.title + " Announcment Id : "  + latestAnnouncementId + " Sleeping 30 Seconds", 'success')
+                const params = DiscordHelpers.buildWebhookParams(firstResolved , "IDMode" );
                 DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
                 latestAnnouncementId++
+                await Utils.sleep(6000 * 30)
+            } else {
+                Utils.log('Failing to get Id Mode Response , Sleeping 30 Seconds ' , 'error')
+                await Utils.sleep(6000 * 30)
+                continue
             }
-            await Utils.sleep(100)
+            await Utils.sleep(200)
         }
     }
 
@@ -66,16 +63,17 @@ export class Main extends MainHelper {
         const myConfig = JSON.parse(fs.readFileSync(process.cwd() + "\\JDatabase\\Config.json",'utf-8'));
         return myConfig
     }
-
+    
     newListingAlert(newListingSecond : IFrontendRequest ){
         this.LatestListing = newListingSecond;
-        if(this.index ===1) return
+        if(this.index ===1 || !this.LatestListing) return
         Utils.log('New Listing Found : ' + this.LatestListing.title)
         const params = DiscordHelpers.buildWebhookParams(this.LatestListing);
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
-
-
 }
-// new Main().runFrontendMode()
-new Main().runIdMode()
+new Main().runFrontendMode()
+Utils.sleep(200).then(()=>{
+    new Main().runIdMode()
+
+})
