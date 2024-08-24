@@ -21,8 +21,6 @@ export class DiscordHelpers {
             headers: { 'Content-type': 'application/json' }
         }).catch(async (err:any) => {
             Utils.log('Failed to send webhook ' + err)
-            await Utils.sleep(3000)
-            return this.sendWebhook(webhookUrl, params)
         })
     }
 
@@ -36,16 +34,16 @@ export class DiscordHelpers {
             embeds: [
                 {
                     title: 'New Listing Catched',
-                    description: data.title,
+                    description: data.title || "No Title",
                     color: color,
                     fields: [
                         {
                             name: 'Listed At ',
-                            value: data.listed_at,
+                            value: data.listed_at || "No Listed At",
                             inline: true,
                         },{
                             name: 'First Listed At',
-                            value: data.first_listed_at,
+                            value: data.first_listed_at || "No First Listed At",
                             inline: true,
                         },{
                             name: 'Delay',
