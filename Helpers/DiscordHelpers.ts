@@ -1,5 +1,7 @@
-import axios from 'axios'
+const axios = require('axios')
 import { Utils } from './Utils'
+import {HttpsProxyAgent} from 'https-proxy-agent';
+import { Proxy } from '../HttpClient/Proxy';
 export interface Root {
     listed_at: string
     first_listed_at: string
@@ -15,11 +17,19 @@ export interface Root {
 
   
 export class DiscordHelpers {
-
-    static async sendWebhook(webhookUrl: string, params: Record<any, any>) {
-        axios.post(webhookUrl, params, {
-            headers: { 'Content-type': 'application/json' }
-        }).catch(async (err:any) => {
+    static Proxy = new Proxy()
+    static async sendWebhook(webhookUrl: string, params: Record<any, any> , isError = false ) {
+        const proxy = this.Proxy.getMyProxy('Proxy.txt')
+        const agent = new HttpsProxyAgent(proxy);
+        const configuration = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            httpsAgent: agent
+        };
+        //@ts-ignore
+        if(!isError) delete configuration.httpsAgent
+        axios.post(webhookUrl, params, configuration).catch(async (err:any) => {
             Utils.log('Failed to send webhook ' + err)
         })
     }
