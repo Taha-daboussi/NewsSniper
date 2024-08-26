@@ -1,6 +1,6 @@
-import { DiscordHelpers } from "./Helpers/DiscordHelpers";
-import { Utils } from "./Helpers/Utils";
-import { GoClient } from "./HttpClient/GoClient";
+import { DiscordHelpers } from "../../Helpers/DiscordHelpers";
+import { Utils } from "../../Helpers/Utils";
+import { GoClient } from "../../HttpClient/GoClient";
 import { MainHelper } from "./MainHelper";
 import { FrontendRequests, IFrontendRequest } from "./Requests/FrontendRequest";
 import fs from 'fs'

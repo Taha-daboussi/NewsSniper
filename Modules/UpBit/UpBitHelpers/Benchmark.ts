@@ -1,6 +1,6 @@
-import { FrontendRequests } from './Requests/FrontendRequest';
-import { Main } from './Main';
-import { Utils } from "./Helpers/Utils";
+import { FrontendRequests } from '../Requests/FrontendRequest';
+import { Main } from '../Main';
+import { Utils } from "../../../Helpers/Utils";
 
 async function benchmarkRequests() {
     const mainInstance = new Main(); // Assuming you have a Main class instance ready

@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Utils } from './Helpers/Utils'
+import { Utils } from '../../Helpers/Utils'
 export class MainHelper {
 
     getUserAgents(){

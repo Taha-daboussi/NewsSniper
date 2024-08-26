@@ -1,5 +1,5 @@
-import { DiscordHelpers } from "../Helpers/DiscordHelpers";
-import { Utils } from "../Helpers/Utils";
+import { DiscordHelpers } from "../../../Helpers/DiscordHelpers";
+import { Utils } from "../../../Helpers/Utils";
 import { Main } from "../Main";
 
 export interface IFrontendRequest {

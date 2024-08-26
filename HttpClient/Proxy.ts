@@ -1,3 +1,5 @@
+import path from "path";
+
 // import { RemoteSettings } from "./remoteSettings/remoteSettings";
 const RemoteSettings = {} as any;
 const fs = require('fs');
@@ -27,14 +29,18 @@ export class Proxy implements IProxy {
     getMyProxyArray() {
         if (!this.myProxies) {
             try {
-                const myProxies = fs.readFileSync(process.cwd() + "\\JDatabase\\Proxy.txt", 'utf-8').split('\r\n')
+                const rootDir = path.resolve(__dirname,'../');
+                const logFilePath = path.join(rootDir, 'JDatabase\\Proxy.txt');
+
+                const myProxies = fs.readFileSync(logFilePath, 'utf-8').split('\r\n')
                 this.myProxies = myProxies.map((res: any) => {
                     const proxy = res.split(':');
                     return `http://${proxy[2]}:${proxy[3]}@${proxy[0]}:${proxy[1]}`;
                 });
                 return true;
             } catch (err) {
-                return false;
+                this.myProxies = []
+                return  false ;
             }
         }
         return false;

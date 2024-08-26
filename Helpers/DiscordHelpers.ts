@@ -52,10 +52,6 @@ export class DiscordHelpers {
                             value: data.listed_at || "No Listed At",
                             inline: true,
                         },{
-                            name: 'First Listed At',
-                            value: data.first_listed_at || "No First Listed At",
-                            inline: true,
-                        },{
                             name: 'Delay',
                             value: data.delay.toString(),
                             inline: true,

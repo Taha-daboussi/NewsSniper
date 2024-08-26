@@ -1,9 +1,15 @@
 import fs from 'fs';
+import path from 'path';
 export class Utils {
     static log(message: string, type: 'success' | 'error' | 'info' | 'pending' = 'info'): void {
         const timestamp = new Date().toISOString();
         let logMessage = `[${type.toUpperCase()}] [${timestamp}] ${message}`;
-        fs.appendFileSync(process.cwd() + "\\JDatabase\\logs.txt", logMessage + "\n")
+        const rootDir = path.resolve(__dirname,'../');
+
+        // Construct the path to 'logs.txt' in the root directory
+        const logFilePath = path.join(rootDir, 'JDatabase\\logs.txt');
+
+        fs.appendFileSync( logFilePath, logMessage + "\n")
 
         if (type.toLowerCase() === 'success') {
             logMessage = `\x1b[32m${logMessage}\x1b[0m`; // Green color
