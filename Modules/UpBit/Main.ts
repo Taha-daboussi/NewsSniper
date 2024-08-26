@@ -85,7 +85,7 @@ export class Main extends MainHelper {
     }
 }
 new Main().runFrontendMode()
-// Utils.sleep(200).then(() => {
-//     new Main().runIdMode()
+Utils.sleep(200).then(() => {
+    new Main().runIdMode()
 
-// })
+})
