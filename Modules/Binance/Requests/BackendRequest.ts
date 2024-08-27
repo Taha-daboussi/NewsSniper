@@ -8,7 +8,7 @@ export class BackendRequest {
         this.Main = Main;
     }
     async run(): Promise<any> {
-        Utils.log('Getting Backend Request for binance ', 'pending');
+        Utils.log('Getting **BACKEND** Request for binance ', 'pending');
         const headers = {
             Connection: 'keep-alive',
             'sec-ch-ua': '"Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"',
@@ -52,9 +52,7 @@ export class BackendRequest {
 
             throw new Error('Error while fetching Binance Announcments');
         } catch (err) {
-            Utils.log('Error while fetching Binance Announcments' + err, "error");
-            await Utils.sleep(5000);
-            return this.run();
+            // Utils.log('Error while fetching Binance Announcments' + err, "error");
         }
     }
 

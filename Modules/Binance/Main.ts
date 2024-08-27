@@ -15,18 +15,23 @@ export class Main extends MainHelpers {
 
     async frontEndMonitor() {
         while (true) {
+            try{
             let index = 0
             const latestAnnouncementId = await this.FrontendRequest.run()
             index++;
             if (index === 1) continue;
             if (latestAnnouncementId.title && latestAnnouncementId !== this.latestAnnouncmentId) {
-                Utils.log('New Listing Found : ' + JSON.stringify(latestAnnouncementId), 'success')
+                Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
                 latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
                 this.latestAnnouncmentId = latestAnnouncementId
                 const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId , {Mode : "Frontend" , Website : "Binance"});
                 DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
             }
-            await Utils.sleep(200)
+            await Utils.sleep(100)
+        }catch(err){
+            Utils.log("Error In Monitor Frontend Mode" + err, 'error')
+            continue;
+        }
 
         }
     }
@@ -34,12 +39,15 @@ export class Main extends MainHelpers {
     async backendMonitor() {
         let index = 0
         while (true) {
+            try{
             const latestAnnouncementId = await this.BackendRequest.run();
+            if(!latestAnnouncementId || !latestAnnouncementId.latestData) continue
+
             if(index ===0) this.latestAnnouncmentId = latestAnnouncementId.latestData
             index++;
             const data = this.compareArrays(this.latestAnnouncmentId || [], latestAnnouncementId.latestData)
             if (data.length > 0 && data[0].originalItem && data[0].newItem) {
-                Utils.log('New Listing Found : ' + JSON.stringify(data), 'success')
+                Utils.log('New Listing Found Using **BACKEND!** Request : ' + JSON.stringify(data), 'success')
 
                 const webhookData  = {
                     ...data[0].newItem,
@@ -52,6 +60,12 @@ export class Main extends MainHelpers {
                 const myParas = DiscordHelpers.buildWebhookParams(webhookData , {Mode : "Backend" , Website : "Binance"});
                 DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
             }
+            await Utils.sleep(100)
+
+        }catch(err){
+            Utils.log("Error In Monitor Backend Mode" + err, 'error')
+            continue;
+        }
         }
     }
 

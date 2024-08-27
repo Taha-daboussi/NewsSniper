@@ -8,7 +8,7 @@ export class FrontendRequest {
   }
 
   async run(): Promise<any> {
-    Utils.log('Getting Binance Latest Announcments');
+    Utils.log('Getting **FRONTEND** Request for binance', 'pending');
     const headers = {
       Connection: 'keep-alive',
       'sec-ch-ua': '"Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"',
@@ -30,29 +30,27 @@ export class FrontendRequest {
       method: "GET",
       headers
     };
-
+    let response
     try {
       const startTime = Date.now();  // Record the start time
 
-      const response = await this.Main.GoClient.sendRequest(payload).catch(err => {
+      response = await this.Main.GoClient.sendRequest(payload).catch(err => {
         throw new Error(err);
       });
       const endTime = Date.now();  // Record the end time
 
 
       if (response && response.body) {
-        const Data = JSON.parse(response.body.match(/"articles":?([\s\S]*?),"catalogs":/)[1])
+        var Data = JSON.parse(response.body.match(/"articles":?([\s\S]*?),"catalogs":/)[1])
         if(Data[0]){
           Utils.log('Binance Announcments fetched successfully' , 'success');
           return {...Data[0] , delay : endTime - startTime , cacheStatus : response.headers["X-Cache"]  , skipBypass : false } 
         }
       }
 
-      throw new Error('Error while fetching Binance Announcments');
+      throw new Error(response.body);
     } catch (err) {
-      Utils.log('Error while fetching Binance Announcments' + err, "error");
-      await Utils.sleep(5000);
-      return this.run();
+      // Utils.log('Error while fetching Binance Announcments' + err, "error");
     }
   }
 }

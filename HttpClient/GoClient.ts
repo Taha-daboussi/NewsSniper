@@ -1,3 +1,5 @@
+import { raw } from 'express';
+import { Utils } from '../Helpers/Utils';
 import { HttpsAgent } from './HttpsAgent';
 import { Proxy } from './Proxy';
 import { initGoClinet } from './initGoClient';
@@ -42,6 +44,7 @@ export class GoClient implements IGoClient {
      * @returns The response object
      */
     async sendRequest(requestPayloadData: Payload, myProxyFile: any = this.proxyFile , forcedProxy : string = '') {
+        let raw
         try {
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy)
                 requestPayloadData.sessionId = requestPayloadData.proxy.toString();
@@ -64,7 +67,7 @@ export class GoClient implements IGoClient {
                   console.error('Invalid URL:', forcedProxy);
                 }
               }
-              const raw = {
+               raw = {
                 sessionId: requestPayloadData.proxy?.toString(),
                 proxyUrl: requestPayloadData.proxy,
                 certificatePinningHosts: {},
@@ -83,6 +86,7 @@ export class GoClient implements IGoClient {
             if (e.message && e?.message.includes('connect ECONNREFUSED 127.0.0.1')) {
                 _initGoClinet.initMyGoClient(false)
             }
+            Utils.log('Error while sending request ' + JSON.stringify(raw), 'error');
             return Promise.reject(e);
 
         }
