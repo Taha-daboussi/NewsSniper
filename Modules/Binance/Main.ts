@@ -2,17 +2,16 @@ import path from "path";
 import { DiscordHelpers } from "../../Helpers/DiscordHelpers";
 import { Utils } from "../../Helpers/Utils";
 import { GoClient } from "../../HttpClient/GoClient";
-import { MainHelper } from "../UpBit/MainHelper";
+import { MainHelpers } from "./MainHelpers";
 import { FrontendRequest } from "./Requests/FrontendRequest";
 import fs from 'fs'
 import { BackendRequest } from "./Requests/BackendRequest";
-export class Main extends MainHelper {
+export class Main extends MainHelpers {
     GoClient = new GoClient()
     FrontendRequest = new FrontendRequest(this);
     BackendRequest = new BackendRequest(this);
     index = 0
     latestAnnouncmentId: any;
-    Config = this.getConfig();
 
     async frontEndMonitor() {
         while (true) {
@@ -24,8 +23,8 @@ export class Main extends MainHelper {
                 Utils.log('New Listing Found : ' + JSON.stringify(latestAnnouncementId), 'success')
                 latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
                 this.latestAnnouncmentId = latestAnnouncementId
-                const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId);
-                DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, myParas, false)
+                const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId , {Mode : "Frontend" , Website : "Binance"});
+                DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
             }
             await Utils.sleep(200)
 
@@ -36,25 +35,24 @@ export class Main extends MainHelper {
         let index = 0
         while (true) {
             const latestAnnouncementId = await this.BackendRequest.run();
+            if(index ===0) this.latestAnnouncmentId = latestAnnouncementId.latestData
             index++;
-            if (index === 1) continue;
-            if (latestAnnouncementId.title && latestAnnouncementId !== this.latestAnnouncmentId) {
-                Utils.log('New Listing Found : ' + JSON.stringify(latestAnnouncementId), 'success')
-                latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
-                this.latestAnnouncmentId = latestAnnouncementId
-                const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId);
-                DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, myParas, false)
+            const data = this.compareArrays(this.latestAnnouncmentId || [], latestAnnouncementId.latestData)
+            if (data.length > 0 && data[0].originalItem && data[0].newItem) {
+                Utils.log('New Listing Found : ' + JSON.stringify(data), 'success')
+
+                const webhookData  = {
+                    ...data[0].newItem,
+                    listed_at : data[0].newItem.releaseDate,
+                    delay : latestAnnouncementId.delay,
+                    cacheStatus : latestAnnouncementId.cacheStatus,
+                    skipBypass : latestAnnouncementId.skipBypass
+                }
+                this.latestAnnouncmentId = latestAnnouncementId.latestData
+                const myParas = DiscordHelpers.buildWebhookParams(webhookData , {Mode : "Backend" , Website : "Binance"});
+                DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
             }
         }
-    }
-
-    getConfig() {
-        const rootDir = path.resolve(__dirname, "../../");
-
-        // Construct the path to 'logs.txt' in the root directory
-        const logFilePath = path.join(rootDir, 'JDatabase\\Config.json');
-        const myConfig = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
-        return myConfig
     }
 
 
