@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { Utils } from '../../Helpers/Utils'
+import path from 'path';
 export class MainHelper {
 
     getUserAgents(){
@@ -1009,10 +1010,15 @@ export class MainHelper {
     }
 
     shuffleProxyOrder(){
-        const path = "\\JDatabase\\Proxy.txt"
-        const myProxies = fs.readFileSync(process.cwd() + path, 'utf-8').split('\r\n')
+
+        const rootDir = path.resolve(__dirname, "../../");
+
+        // Construct the path to 'logs.txt' in the root directory
+        const logFilePath = path.join(rootDir, 'JDatabase\\Proxy.txt');
+
+        const myProxies = fs.readFileSync(logFilePath, 'utf-8').split('\r\n')
         const shuffledProxies = Utils.shuffle(myProxies);
-        fs.writeFileSync(process.cwd() + path, shuffledProxies.join('\r\n'), 'utf-8');
+        fs.writeFileSync(logFilePath, shuffledProxies.join('\r\n'), 'utf-8');
     }
 
 }

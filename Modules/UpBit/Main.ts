@@ -5,6 +5,7 @@ import { MainHelper } from "./MainHelper";
 import { FrontendRequests, IFrontendRequest } from "./Requests/FrontendRequest";
 import fs from 'fs'
 import { IDModeRequests } from "./Requests/IDModeRequest";
+import path from "path";
 export class Main extends MainHelper {
     GoClient = new GoClient()
     FrontendRequests = new FrontendRequests(this)
@@ -17,20 +18,11 @@ export class Main extends MainHelper {
         this.shuffleProxyOrder()
         while (true) {
             try {
-                const requests = [this.FrontendRequests.getNews(), this.FrontendRequests.getNews(true)];
+                const requests = await this.FrontendRequests.getNews();
                 // Process the first response as soon as it finishes and return the result of first request promise 
-                const firstResolved = await Promise.race(requests.map(p => p.then(data => ({ resolved: true, data })).catch(error => ({ resolved: false, error })))) as any;
-                const newListingFirst = firstResolved.data;
+                const newListingFirst = requests;
                 this.index++;
-                if (newListingFirst.title !== this.LatestListing.title) {
-                    this.newListingAlert(newListingFirst)
-                    continue;
-                }
-                // this will process the unfinished promise , and check if there is any change in the new announcnments 
-                const [_, ...restResolved] = await Promise.allSettled(requests);
-                const newListingSecond = restResolved[0].status === 'fulfilled' ? restResolved[0].value : null;
-
-                if (newListingSecond && newListingSecond.title !== this.LatestListing.title) {
+                if (newListingFirst.title.toLowerCase().trim() !== this.LatestListing?.title?.toLowerCase().trim()) {
                     this.newListingAlert(newListingFirst)
                 }
                 Utils.sleep(200)
@@ -42,7 +34,7 @@ export class Main extends MainHelper {
     }
 
     async runIdMode() {
-        let latestAnnouncementId = 4451
+        let latestAnnouncementId = 4459
         const longWait = 6000 * 30
         this.shuffleProxyOrder()
         while (true) {
@@ -72,14 +64,19 @@ export class Main extends MainHelper {
     }
 
     getConfig() {
-        const myConfig = JSON.parse(fs.readFileSync(process.cwd() + "\\JDatabase\\Config.json", 'utf-8'));
+        const rootDir = path.resolve(__dirname, "../../");
+
+        // Construct the path to 'logs.txt' in the root directory
+        const logFilePath = path.join(rootDir, 'JDatabase\\Config.json');
+        const myConfig = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
         return myConfig
     }
 
     newListingAlert(newListingSecond: IFrontendRequest) {
+        Utils.log('New Listing Found : '  + JSON.stringify(newListingSecond) + " OLD Listing : " + JSON.stringify(this.LatestListing)   + " Is Equal " + (this.LatestListing.title === newListingSecond) , 'success')
+
         this.LatestListing = newListingSecond;
         if (this.index === 1 || !this.LatestListing) return
-        Utils.log('New Listing Found : ' + this.LatestListing.title)
         const params = DiscordHelpers.buildWebhookParams(this.LatestListing);
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
