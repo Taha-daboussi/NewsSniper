@@ -62,11 +62,7 @@ export class initGoClinet implements GoClientInitializer {
                 exec(launchAppCommand);
             }
 
-            console.log(command);
             const newProcess = exec(command, (err, stderr, stdout) => {
-                console.log(err);
-                console.log(stderr);
-                console.log(stdout);
                 resolve(true);
             });
         });
