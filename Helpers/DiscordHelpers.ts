@@ -1,6 +1,6 @@
 const axios = require('axios')
 import { Utils } from './Utils'
-import {HttpsProxyAgent} from 'https-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { Proxy } from '../HttpClient/Proxy';
 export interface Root {
     listed_at: string
@@ -12,13 +12,13 @@ export interface Root {
     need_update_badge: boolean
     delay: number
     cacheStatus: string[]
-    skipBypass : boolean
-  }
+    skipBypass: boolean
+}
 
-  
+
 export class DiscordHelpers {
     static Proxy = new Proxy()
-    static async sendWebhook(webhookUrl: string, params: Record<any, any> , isError = false ) {
+    static async sendWebhook(webhookUrl: string, params: Record<any, any>, isError = false) {
         const proxy = this.Proxy.getMyProxy('Proxy.txt')
         const agent = new HttpsProxyAgent(proxy);
         const configuration = {
@@ -28,14 +28,17 @@ export class DiscordHelpers {
             httpsAgent: agent
         };
         //@ts-ignore
-        if(!isError) delete configuration.httpsAgent
-        axios.post(webhookUrl, params, configuration).catch(async (err:any) => {
+        if (!isError) delete configuration.httpsAgent
+        axios.post(webhookUrl, params, configuration).catch(async (err: any) => {
             Utils.log('Failed to send webhook ' + err)
+            if (err.response && err.response.status && (err.response.status !== 429 || err.response.status !== 400)) {
+                return this.sendWebhook(webhookUrl, params)
+            }
         })
     }
 
-  
-    static buildWebhookParams(data : Root , Mode = "Frontend"){
+
+    static buildWebhookParams(data: Root, options: Record<any, any> = { Mode: "Frontend", Website: "UpBit" }) {
         const color = 0x00FF00; // Use hexadecimal color value
         const params = {
             username: 'News Monitor',
@@ -49,24 +52,28 @@ export class DiscordHelpers {
                     fields: [
                         {
                             name: 'Listed At ',
-                            value: data.listed_at || "No Listed At",
+                            value: data.listed_at || "No Listed At info",
                             inline: true,
-                        },{
+                        }, {
                             name: 'Delay',
                             value: data.delay.toString(),
                             inline: true,
-                        },{
+                        }, {
                             name: 'Cache Status',
                             value: JSON.stringify(data.cacheStatus[0]),
                             inline: true,
-                        },{
-                            name : "isUsingBypass",
-                            value : (!data.skipBypass).toString(),
-                            inline : true 
-                        },{
-                            name : "Mode",
-                            value : Mode,
-                            inline : true 
+                        }, {
+                            name: "isUsingBypass",
+                            value: (!data.skipBypass).toString(),
+                            inline: true
+                        }, {
+                            name: "Mode",
+                            value: options.Mode,
+                            inline: true
+                        }, {
+                            name: "Website",
+                            value: options.Website,
+                            inline: true
                         }
                     ],
                     footer: {
@@ -81,18 +88,18 @@ export class DiscordHelpers {
         return params
     }
 
-    static buildErrorWebhookParams(err:string){
+    static buildErrorWebhookParams(err: string) {
         const params = {
             username: 'Error',
             content: "Error",  // This will mention everyone
-            avatar_url:'https://media.discordapp.net/attachments/821005392418308147/1053588940621348914/Capture.PNG',
+            avatar_url: 'https://media.discordapp.net/attachments/821005392418308147/1053588940621348914/Capture.PNG',
             embeds: [
                 {
                     title: 'Contract',
                     description: 'Up Bit Announcment Error',
                     color: 0 || '0',
                     fields: [
-                     
+
                         {
                             name: 'ERROR',
                             value: err || '0',
