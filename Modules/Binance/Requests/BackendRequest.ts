@@ -1,7 +1,9 @@
 import { Utils } from "../../../Helpers/Utils";
 import { Main } from "../Main";
+
 export class BackendRequest {
     Main: Main;
+    LatestCategoriesNews = []
     constructor(Main: Main) {
         this.Main = Main;
     }
@@ -39,10 +41,12 @@ export class BackendRequest {
 
 
             if (response && response.body) {
-                const Data = JSON.parse(response.body.data.catalogs[0].articles)
-                if (Data[0]) {
+                if (response.body?.data?.catalogs) {
                     Utils.log('Binance Announcments fetched successfully', 'success');
-                    return { ...Data[0], delay: endTime - startTime, cacheStatus: response.headers["X-Cache"], skipBypass: false }
+                    const myData = response.body.data.catalogs.map((res : any )=>{
+                        return res.articles[0]
+                    })
+                    return { latestData  : myData, delay: endTime - startTime, cacheStatus: response.headers["X-Cache"], skipBypass: false }
                 }
             }
 
@@ -53,4 +57,7 @@ export class BackendRequest {
             return this.run();
         }
     }
+
+
+
 }

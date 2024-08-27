@@ -45,7 +45,7 @@ export class Main extends MainHelper {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
                     Utils.log('New Listing Found : ' + firstResolved.title + " Announcment Id : " + latestAnnouncementId + " Sleeping 30 Seconds", 'success')
-                    const params = DiscordHelpers.buildWebhookParams(firstResolved, "IDMode");
+                    const params = DiscordHelpers.buildWebhookParams(firstResolved, {Website : "Upbit",Mode : "IDMode"});
                     DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
                     latestAnnouncementId++
                     await Utils.sleep(longWait)
@@ -77,7 +77,7 @@ export class Main extends MainHelper {
 
         this.LatestListing = newListingSecond;
         if (this.index === 1 || !this.LatestListing) return
-        const params = DiscordHelpers.buildWebhookParams(this.LatestListing);
+        const params = DiscordHelpers.buildWebhookParams(this.LatestListing, {Website : "Upbit",Mode : "IDMode"});
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
 }
