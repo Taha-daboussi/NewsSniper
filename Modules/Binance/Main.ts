@@ -14,24 +14,29 @@ export class Main extends MainHelpers {
     latestAnnouncmentId: any;
 
     async frontEndMonitor() {
+        let index = 0
+
         while (true) {
-            try{
-            let index = 0
-            const latestAnnouncementId = await this.FrontendRequest.run()
-            index++;
-            if (index === 1) continue;
-            if (latestAnnouncementId.title && latestAnnouncementId !== this.latestAnnouncmentId) {
-                Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
-                latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
-                this.latestAnnouncmentId = latestAnnouncementId
-                const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId , {Mode : "Frontend" , Website : "Binance"});
-                DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
+            try {
+                const latestAnnouncementId = await this.FrontendRequest.run()
+                if (index === 0) this.latestAnnouncmentId = latestAnnouncementId
+                
+                if(!latestAnnouncementId  ||  !this.latestAnnouncmentId || !latestAnnouncementId.title ||this.latestAnnouncmentId.title)continue
+
+                if (latestAnnouncementId  && this.latestAnnouncmentId && latestAnnouncementId.title && latestAnnouncementId.title !== this.latestAnnouncmentId.title) {
+                    Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
+                    latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
+                    this.latestAnnouncmentId = latestAnnouncementId
+                    const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId, { Mode: "Frontend", Website: "Binance" });
+                    DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
+                }
+                index++;
+
+                await Utils.sleep(100)
+            } catch (err) {
+                Utils.log("Error In Monitor Frontend Mode" + err, 'error')
+                continue;
             }
-            await Utils.sleep(100)
-        }catch(err){
-            Utils.log("Error In Monitor Frontend Mode" + err, 'error')
-            continue;
-        }
 
         }
     }
@@ -39,33 +44,36 @@ export class Main extends MainHelpers {
     async backendMonitor() {
         let index = 0
         while (true) {
-            try{
-            const latestAnnouncementId = await this.BackendRequest.run();
-            if(!latestAnnouncementId || !latestAnnouncementId.latestData) continue
+            try {
+                const latestAnnouncementId = await this.BackendRequest.run();
+                if (!latestAnnouncementId || !latestAnnouncementId.latestData) continue
 
-            if(index ===0) this.latestAnnouncmentId = latestAnnouncementId.latestData
-            index++;
-            const data = this.compareArrays(this.latestAnnouncmentId || [], latestAnnouncementId.latestData)
-            if (data.length > 0 && data[0].originalItem && data[0].newItem) {
-                Utils.log('New Listing Found Using **BACKEND!** Request : ' + JSON.stringify(data), 'success')
+                if (index === 0) this.latestAnnouncmentId = latestAnnouncementId.latestData
+                index++;
+                const data = this.compareArrays(this.latestAnnouncmentId || [], latestAnnouncementId.latestData)
+                for (const dataItem of data) {
+                    if (dataItem.originalItem && dataItem.newItem) {
+                        Utils.log('New Listing Found Using **BACKEND!** Request : ' + JSON.stringify(dataItem), 'success')
 
-                const webhookData  = {
-                    ...data[0].newItem,
-                    listed_at : data[0].newItem.releaseDate,
-                    delay : latestAnnouncementId.delay,
-                    cacheStatus : latestAnnouncementId.cacheStatus,
-                    skipBypass : latestAnnouncementId.skipBypass
+                        const webhookData = {
+                            ...dataItem.newItem,
+                            listed_at: dataItem.newItem.releaseDate,
+                            delay: latestAnnouncementId.delay,
+                            cacheStatus: latestAnnouncementId.cacheStatus,
+                            skipBypass: latestAnnouncementId.skipBypass
+                        }
+                        this.latestAnnouncmentId = latestAnnouncementId.latestData
+                        const myParas = DiscordHelpers.buildWebhookParams(webhookData, { Mode: "Backend", Website: "Binance" });
+                        DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
+                    }
                 }
-                this.latestAnnouncmentId = latestAnnouncementId.latestData
-                const myParas = DiscordHelpers.buildWebhookParams(webhookData , {Mode : "Backend" , Website : "Binance"});
-                DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
-            }
+
             await Utils.sleep(100)
 
-        }catch(err){
-            Utils.log("Error In Monitor Backend Mode" + err, 'error')
-            continue;
-        }
+        } catch (err) {
+                Utils.log("Error In Monitor Backend Mode" + err, 'error')
+                continue;
+            }
         }
     }
 
@@ -73,4 +81,4 @@ export class Main extends MainHelpers {
 
 }
 new Main().frontEndMonitor()
-new Main().backendMonitor()
+// new Main().backendMonitor()
