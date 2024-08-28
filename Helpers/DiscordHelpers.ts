@@ -74,6 +74,11 @@ export class DiscordHelpers {
                             name: "Website",
                             value: options.Website,
                             inline: true
+                        },
+                        {
+                            name: "Capture Time",
+                            value: new Date().toISOString(),
+                            inline: true
                         }
                     ],
                     footer: {

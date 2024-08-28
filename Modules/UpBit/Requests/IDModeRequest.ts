@@ -77,7 +77,7 @@ export class IDModeRequests {
             }
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
-            Utils.log('Failed to Get Backend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
+            Utils.log(`Failed to get announcements. UserAgent: ${userAgent}. Error: ${err.message}`, 'error');
         }
     }
 }
