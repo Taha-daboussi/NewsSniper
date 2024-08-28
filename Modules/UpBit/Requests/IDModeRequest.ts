@@ -33,7 +33,6 @@ export class IDModeRequests {
 
     async getNews(latestAnnouncementId : number): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
-        // Create an array of promises for all the requests
         const skipBypass = false
         const url = `https://api-manager.upbit.com/api/v1/announcements/` + latestAnnouncementId + "?&random=" + Math.random()
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];

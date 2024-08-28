@@ -22,9 +22,9 @@ export class Main extends MainHelper {
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
                 this.index++;
-                if (newListingFirst && newListingFirst.title && newListingFirst.title.toLowerCase().trim() !== this.LatestListing?.title?.toLowerCase().trim()) {
+                if (newListingFirst && newListingFirst.title && newListingFirst.title !== this.LatestListing?.title ) {
                     Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(newListingFirst), 'success')
-                    this.newListingAlert(newListingFirst)
+                    this.newListingAlert(newListingFirst , "Frontend")
                 }
                 Utils.sleep(100)
             } catch (err) {
@@ -35,7 +35,7 @@ export class Main extends MainHelper {
     }
 
     async runIdMode() {
-        let latestAnnouncementId = 4459
+        let latestAnnouncementId = 4462
         const longWait = 6000 * 60
         this.shuffleProxyOrder()
         while (true) {
@@ -73,12 +73,12 @@ export class Main extends MainHelper {
         return myConfig
     }
 
-    newListingAlert(newListingSecond: IFrontendRequest) {
+    newListingAlert(newListingSecond: IFrontendRequest , Mode : "Frontend") {
         Utils.log('New Listing Found : '  + JSON.stringify(newListingSecond) + " OLD Listing : " + JSON.stringify(this.LatestListing)   + " Is Equal " + (this.LatestListing.title === newListingSecond) , 'success')
 
         this.LatestListing = newListingSecond;
         if (this.index === 1 || !this.LatestListing) return
-        const params = DiscordHelpers.buildWebhookParams(this.LatestListing, {Website : "Upbit",Mode : "IDMode"});
+        const params = DiscordHelpers.buildWebhookParams(this.LatestListing, {Website : "Upbit",Mode :Mode});
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
 }
