@@ -75,7 +75,7 @@ export class FrontendRequests {
         return latestList;
     }
 
-    async getNews(skipBypass = false): Promise<IFrontendRequest> {
+    async getNews(skipBypass = false): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         // Create an array of promises for all the requests
         const url = `https://api-manager.upbit.com/api/v1/announcements?os=ios&page=1&per_page=20&category=all`+ (skipBypass ? "" : `&bypass-cf-cache=` + Math.random())
@@ -119,10 +119,7 @@ export class FrontendRequests {
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
             Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
-            const params = DiscordHelpers.buildErrorWebhookParams(err.message)
-            DiscordHelpers.sendWebhook(this.Main.Config.ErrorWebhook,params , true )
-            await Utils.sleep();
-            return this.getNews();
+          
         }
     }
 }

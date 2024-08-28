@@ -31,7 +31,7 @@ export class IDModeRequests {
         this.Main = Main
     }
 
-    async getNews(latestAnnouncementId : number): Promise<IDModeGetNewsResponse | {success : boolean}> {
+    async getNews(latestAnnouncementId : number): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         // Create an array of promises for all the requests
         const skipBypass = false
@@ -70,19 +70,15 @@ export class IDModeRequests {
             if (response && response.body) {
                 if(!response.body.success){
                     const latestData  : IDModeResponse = response.body
-                    return {...latestData , delay : duration , cacheStatus: response.headers['Cf-Cache-Status'] , skipBypass };
+                    return {...latestData , delay : duration , cacheStatus: response?.headers.length > 0 ? response?.headers['Cf-Cache-Status'] :"Uncached" , skipBypass };
                 }else if (response.body.success){
                     const latestData  : IDModeResponse = response.body.data
-                    return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] , skipBypass }
+                    return { ...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['Cf-Cache-Status'] :"Uncached" , skipBypass }
                 }
             }
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
-            Utils.log('Failed to Get Frontend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
-            const params = DiscordHelpers.buildErrorWebhookParams(err.message)
-            DiscordHelpers.sendWebhook(this.Main.Config.ErrorWebhook,params , true )
-            await Utils.sleep();
-            return this.getNews(latestAnnouncementId);
+            Utils.log('Failed to Get Backend announcments using os: ' + " UserAgent: " + userAgent + " Error :  " + err, 'error')
         }
     }
 }

@@ -1,4 +1,3 @@
-import { raw } from 'express';
 import { Utils } from '../Helpers/Utils';
 import { HttpsAgent } from './HttpsAgent';
 import { Proxy } from './Proxy';

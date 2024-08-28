@@ -22,10 +22,10 @@ export class Main extends MainHelper {
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
                 this.index++;
-                if (newListingFirst.title.toLowerCase().trim() !== this.LatestListing?.title?.toLowerCase().trim()) {
+                if (newListingFirst && newListingFirst.title && newListingFirst.title.toLowerCase().trim() !== this.LatestListing?.title?.toLowerCase().trim()) {
                     this.newListingAlert(newListingFirst)
                 }
-                Utils.sleep(200)
+                Utils.sleep(100)
             } catch (err) {
                 Utils.log("Error In Monitor Frontend Mode" + err, 'error')
                 await Utils.sleep(200)
@@ -35,7 +35,7 @@ export class Main extends MainHelper {
 
     async runIdMode() {
         let latestAnnouncementId = 4459
-        const longWait = 6000 * 30
+        const longWait = 6000 * 60
         this.shuffleProxyOrder()
         while (true) {
             try {
@@ -55,7 +55,7 @@ export class Main extends MainHelper {
                     await Utils.sleep(longWait)
                     continue;
                 }
-                await Utils.sleep(200)
+                await Utils.sleep(500)
             } catch (err) {
                 Utils.log("Error In Monitor ID Mode" + err, 'error')
                 await Utils.sleep(200)
