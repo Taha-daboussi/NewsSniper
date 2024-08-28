@@ -23,6 +23,7 @@ export class Main extends MainHelper {
                 const newListingFirst = requests;
                 this.index++;
                 if (newListingFirst && newListingFirst.title && newListingFirst.title.toLowerCase().trim() !== this.LatestListing?.title?.toLowerCase().trim()) {
+                    Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(newListingFirst), 'success')
                     this.newListingAlert(newListingFirst)
                 }
                 Utils.sleep(100)
@@ -44,7 +45,7 @@ export class Main extends MainHelper {
                 if (firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
-                    Utils.log('New Listing Found : ' + firstResolved.title + " Announcment Id : " + latestAnnouncementId + " Sleeping 30 Seconds", 'success')
+                    Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncementId, 'success')
                     const params = DiscordHelpers.buildWebhookParams(firstResolved, {Website : "Upbit",Mode : "IDMode"});
                     DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
                     latestAnnouncementId++
