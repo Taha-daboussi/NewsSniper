@@ -51,8 +51,7 @@ export class Main extends MainHelper {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
                     Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncementId, 'success')
-                    const params = DiscordHelpers.buildWebhookParams(firstResolved, { Website: "Upbit", Mode: "IDMode" });
-                    DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
+                    this.newListingAlert(firstResolved, "IDMode")
                     latestAnnouncementId++
                     await Utils.sleep(longWait)
                     continue;
