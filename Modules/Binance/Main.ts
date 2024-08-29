@@ -20,10 +20,10 @@ export class Main extends MainHelpers {
             try {
                 const latestAnnouncementId = await this.FrontendRequest.run()
                 if (index === 0) this.latestAnnouncmentId = latestAnnouncementId
-                
-                if(!latestAnnouncementId  ||  !this.latestAnnouncmentId || !latestAnnouncementId.title ||this.latestAnnouncmentId.title)continue
 
-                if (latestAnnouncementId  && this.latestAnnouncmentId && latestAnnouncementId.title && latestAnnouncementId.title !== this.latestAnnouncmentId.title) {
+                if (!latestAnnouncementId || !this.latestAnnouncmentId || !latestAnnouncementId.title || this.latestAnnouncmentId.title) continue
+
+                if (latestAnnouncementId && this.latestAnnouncmentId && latestAnnouncementId.title && latestAnnouncementId.title !== this.latestAnnouncmentId.title) {
                     Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
                     latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
                     this.latestAnnouncmentId = latestAnnouncementId
@@ -43,9 +43,12 @@ export class Main extends MainHelpers {
 
     async backendMonitor() {
         let index = 0
+        let pageSize = 1
         while (true) {
             try {
-                const latestAnnouncementId = await this.BackendRequest.run();
+                const latestAnnouncementId = await this.BackendRequest.run(pageSize);
+                pageSize === 3 ? pageSize = 1 : pageSize++
+
                 if (!latestAnnouncementId || !latestAnnouncementId.latestData) continue
 
                 if (index === 0) this.latestAnnouncmentId = latestAnnouncementId.latestData
@@ -68,9 +71,9 @@ export class Main extends MainHelpers {
                     }
                 }
 
-            await Utils.sleep(100)
+                await Utils.sleep(100)
 
-        } catch (err) {
+            } catch (err) {
                 Utils.log("Error In Monitor Backend Mode" + err, 'error')
                 continue;
             }
@@ -80,5 +83,5 @@ export class Main extends MainHelpers {
 
 
 }
-new Main().frontEndMonitor()
-// new Main().backendMonitor()
+// new Main().frontEndMonitor()
+new Main().backendMonitor()

@@ -7,7 +7,7 @@ export class BackendRequest {
     constructor(Main: Main) {
         this.Main = Main;
     }
-    async run(): Promise<any> {
+    async run(pageSize : number ): Promise<any> {
         Utils.log('Getting **BACKEND** Request for binance ', 'pending');
         const headers = {
             Connection: 'keep-alive',
@@ -24,7 +24,7 @@ export class BackendRequest {
             'Accept-Encoding': 'gzip, deflate, br, zstd',
             'Accept-Language': 'en-US,en;q=0.9'
         }
-        const url = 'https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=3';
+        const url = 'https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=' + pageSize;
         const payload = {
             Url: url,
             method: "GET",
