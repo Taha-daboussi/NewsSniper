@@ -56,11 +56,11 @@ export class DiscordHelpers {
                             inline: true,
                         }, {
                             name: 'Delay',
-                            value: data.delay.toString(),
+                            value: data.delay && data.delay?.toString() || "No Delay Status ",
                             inline: true,
                         }, {
                             name: 'Cache Status',
-                            value: JSON.stringify(data.cacheStatus[0]),
+                            value: data.cacheStatus && JSON.stringify(data.cacheStatus[0]) || "No Cache Status",
                             inline: true,
                         }, {
                             name: "isUsingBypass",
@@ -68,7 +68,7 @@ export class DiscordHelpers {
                             inline: true
                         }, {
                             name: "Mode",
-                            value: options.Mode,
+                            value: options.Mode ,
                             inline: true
                         }, {
                             name: "Website",
