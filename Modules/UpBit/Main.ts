@@ -97,7 +97,7 @@ export class Main extends MainHelper {
     }
 
     newListingAlert(newListingSecond: IFrontendRequest, Mode: "Frontend" | "Tradis" | "IDMode") {
-        const params = DiscordHelpers.buildWebhookParams(newListingSecond as any, { Website: "Upbit", Mode: Mode });
+        const params = DiscordHelpers.buildWebhookParamsForNews(newListingSecond as any, { Website: "Upbit", Mode: Mode });
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
 }
