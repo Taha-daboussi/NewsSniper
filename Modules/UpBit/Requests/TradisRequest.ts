@@ -37,7 +37,7 @@ export class TradisRequest {
         const url = 'https://api.tardis.dev/v1/exchanges/upbit'
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const userAgentData = Utils.parseUserAgent(userAgent)
-        Utils.log(`Getting Id Mode announcements || skipBypass : ` + skipBypass, "pending");
+        Utils.log(`Getting Tradins Mode announcements || skipBypass : ` + skipBypass, "pending");
 
         const headers = {
             Connection: 'keep-alive',
@@ -63,7 +63,7 @@ export class TradisRequest {
         try {
             const response = await this.Main.GoClient.sendRequest(payload);
             if (response && response.body) {
-                    const latestCoin  = this.getLatestCoin(response.body.availableSymbols)
+                const latestCoin  = this.getLatestCoin(response.body.availableSymbols)
                return latestCoin
             }
             throw new Error(JSON.stringify(response.body))

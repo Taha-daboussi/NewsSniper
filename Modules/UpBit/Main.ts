@@ -15,7 +15,7 @@ export class Main extends MainHelper {
     LatestListing = {} as any
     Config = this.getConfig();
     index = 0
-
+    latestAnnouncmentId = 0
     async runFrontendMode() {
         this.shuffleProxyOrder()
         while (true) {
@@ -39,20 +39,19 @@ export class Main extends MainHelper {
         }
     }
 
-    async runIdMode() {
-        let latestAnnouncementId = 4462
+    async runIdMode(latestAnnouncmentId : number ) {
         const longWait = 6000 * 60
         this.shuffleProxyOrder()
-        while (true) {
+        while (true && latestAnnouncmentId) {
             try {
                 // Process the first response as soon as it finishes and return the result of first request promise 
-                const firstResolved = await this.IDModeRequests.getNews(latestAnnouncementId) as any
+                const firstResolved = await this.IDModeRequests.getNews(latestAnnouncmentId) as any
                 if (firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
-                    Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncementId, 'success')
+                    Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncmentId, 'success')
                     this.newListingAlert(firstResolved, "IDMode")
-                    latestAnnouncementId++
+                    latestAnnouncmentId++
                     await Utils.sleep(longWait)
                     continue;
                 } else {
@@ -69,18 +68,17 @@ export class Main extends MainHelper {
     }
 
     async runTradisRequest() {
-        let latestCoin = ''
+        let latestData = ''
         let index = 0
         while (true) {
             try {
                 const response = await this.TradisRequest.getNews();
-                if (index === 0) latestCoin = response.id
-                if (response !== latestCoin) {
-                    latestCoin = response
+                if (index === 0) latestData = response
+                if (JSON.stringify(response) !== JSON.stringify(latestData)) {
+                    latestData = response
                     Utils.log('New Listing Found Using **TRADIS!** Request : ' + response, 'success')
                     this.newListingAlert(response, "Tradis")
                 }
-                await Utils.sleep(100)
             } catch (err) {
                 Utils.log("Error In Monitor Tradis Request" + err, 'error')
             }
@@ -101,8 +99,12 @@ export class Main extends MainHelper {
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
 }
-new Main().runFrontendMode()
-Utils.sleep(200).then(() => {
-    // new Main().runIdMode()
-    // new Main().runTradisRequest()
-})
+
+const main = new Main()
+// main.runFrontendMode()
+// Utils.sleep(2000).then(async () => {
+//     const requests = await new Main().FrontendRequests.getNews()
+//     const  latestAnnouncmentId = requests.id+1
+//     main.runIdMode(latestAnnouncmentId)
+    main.runTradisRequest()
+// })

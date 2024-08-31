@@ -53,7 +53,7 @@ const handleSetByBitApiKey = async (message: any) => {
                 { new: true, upsert: true }
             );
 
-            await message.reply('Your Binance API key and secret have been securely added!');
+            await message.reply('Your Upbit API key and secret have been securely added!');
         } catch (err) {
             console.error(err);
             await message.reply('An error occurred while saving your Binance API credentials.');
@@ -129,7 +129,7 @@ client.on('messageCreate', async (message) => {
             .setColor(0x0099ff)
             .setTitle('Help - Add Binance/Bybit API Keys')
             .setDescription(
-                'To add your Binance or Bybit API key, use the following commands:\n\n`!addbinance <apiKey> <apiSecret>`\n`!addbybit <apiKey> <apiSecret>`\n\nKeep your API keys secure and enable IP restrictions on your exchange accounts.\n`!setamount <amount>`\n\nKeep your API keys secure and enable IP restrictions on your exchange accounts.'
+                'To add your Binance or Bybit API key, use the following commands:\n\n`!addbinance <apiKey> <apiSecret>`\n`!addbybit <apiKey> <apiSecret>`\n\n`!setamount <amount>`\n\nKeep your API keys secure and enable IP restrictions on your exchange accounts.'
             );
 
         await message.channel.send({ embeds: [helpEmbed] });
