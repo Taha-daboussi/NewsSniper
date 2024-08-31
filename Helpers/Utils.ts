@@ -80,5 +80,35 @@ export class Utils {
         return array;
     }
 
+    static  formatNumber(num : number) {
+        if (num >= 1_000_000) {
+          // Format numbers in the millions
+          return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        } else if (num >= 1_000) {
+          // Format numbers in the thousands
+          return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+        } else {
+          // Return the number as is if it's less than 1000
+          return num.toString();
+        }
+      }
+
+    static  extractCoinNames(title : string ) {
+        const coinNames :string[] = [];
+        const regex = /\b[A-Z]{2,}\b/g;  // Matches sequences of two or more uppercase letters
+      
+        const matches =title.match(regex);
+          
+          if (matches) {
+            matches.forEach(match => {
+              if (!coinNames.includes(match) && !match.includes("USD")) {  // Ensure unique coin names
+                coinNames.push(match);
+              }
+            });
+          }
+      
+        return coinNames;
+      }
+
 
 }
