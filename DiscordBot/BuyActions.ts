@@ -33,18 +33,32 @@ interface OrderResponse {
     type: string;
     side: string;
 }
+const getCurrentMarketPrice = async (symbol: string): Promise<number> => {
+  try {
+    const response : any = await axios.get(`${BINANCE_BASE_URL}/api/v3/ticker/price`, {
+      params: { symbol },
+    });
+    return parseFloat(response.data.price);
+  } catch (error: any) {
+    Utils.log('Error fetching current market price:' + error.message);
+    throw new Error('Failed to fetch current market price');
+  }
+};
+
 
 // Function to place a market order to buy a coin
 export const buyCoinFromBinance = async (symbol: string, quantity: number, API_KEY: string, SECRET_KEY: string): Promise<string> => {
     const endpoint = '/api/v3/order';
     const timestamp = Date.now();
+    const marketPrice = await getCurrentMarketPrice(symbol);
+    const coinQuantity = (quantity / marketPrice).toFixed(6); // Round to 6 decimal places
 
     // Parameters for the order
     const params = {
         symbol,
         side: 'BUY',
         type: 'MARKET',
-        quantity: quantity.toString(),
+        quantity: coinQuantity.toString(),
         timestamp: timestamp.toString(),
     };
 
