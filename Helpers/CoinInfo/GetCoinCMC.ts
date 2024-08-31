@@ -20,6 +20,7 @@ export const getCoinData = async (tokenName : string , webhook : string ) :Promi
 
     const params = DiscordHelpers.buildWebhookParamsForCoinInfo(coinEntryData,formattedMessage)
     DiscordHelpers.sendWebhook(webhook,params)
+    return 
 
 }
 

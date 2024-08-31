@@ -19,4 +19,18 @@ const UserSchema: Schema = new Schema({
   amount: { type: Number, default: 0 }, // Add this field for the amount
 });
 
+export async function connectDB() {
+  try {
+      await mongoose.connect("mongodb+srv://blackent151:Ly2HF7qJIOeDkyZD@cluster0.qzd08.mongodb.net/" as string)
+      console.log('Connected to MongoDB');
+  } catch (err) {
+      console.error('Failed to connect to MongoDB', err);
+  }
+}
+
+
+export const initDatabase = () => {
+
+}
+
 export default mongoose.model<IUser>('User', UserSchema);
