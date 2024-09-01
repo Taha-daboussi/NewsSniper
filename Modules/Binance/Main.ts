@@ -27,7 +27,7 @@ export class Main extends MainHelpers {
                     Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
                     latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
                     this.latestAnnouncmentId = latestAnnouncementId
-                    const myParas = DiscordHelpers.buildWebhookParams(latestAnnouncementId, { Mode: "Frontend", Website: "Binance" });
+                    const myParas = DiscordHelpers.buildWebhookParamsForNews(latestAnnouncementId, { Mode: "Frontend", Website: "Binance" });
                     DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
                 }
                 index++;
@@ -66,7 +66,7 @@ export class Main extends MainHelpers {
                             skipBypass: latestAnnouncementId.skipBypass
                         }
                         this.latestAnnouncmentId = latestAnnouncementId.latestData
-                        const myParas = DiscordHelpers.buildWebhookParams(webhookData, { Mode: "Backend", Website: "Binance" });
+                        const myParas = DiscordHelpers.buildWebhookParamsForNews(webhookData, { Mode: "Backend", Website: "Binance" });
                         DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
                     }
                 }
@@ -83,5 +83,5 @@ export class Main extends MainHelpers {
 
 
 }
-// new Main().frontEndMonitor()
+new Main().frontEndMonitor()
 new Main().backendMonitor()
