@@ -101,10 +101,10 @@ export class Main extends MainHelper {
 }
 
 const main = new Main()
-// main.runFrontendMode()
-// Utils.sleep(2000).then(async () => {
-//     const requests = await new Main().FrontendRequests.getNews()
-//     const  latestAnnouncmentId = requests.id+1
-//     main.runIdMode(latestAnnouncmentId)
+main.runFrontendMode()
+Utils.sleep(2000).then(async () => {
+    const requests = await new Main().FrontendRequests.getNews()
+    const  latestAnnouncmentId = requests.id+1
+    main.runIdMode(latestAnnouncmentId)
     main.runTradisRequest()
-// })
+})
