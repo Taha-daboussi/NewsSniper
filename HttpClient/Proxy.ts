@@ -35,7 +35,11 @@ export class Proxy implements IProxy {
                 const myProxies = fs.readFileSync(logFilePath, 'utf-8').split('\r\n')
                 this.myProxies = myProxies.map((res: any) => {
                     const proxy = res.split(':');
-                    return `http://${proxy[2]}:${proxy[3]}@${proxy[0]}:${proxy[1]}`;
+                    if(proxy.length === 4){
+                        return `http://${proxy[2]}:${proxy[3]}@${proxy[0]}:${proxy[1]}`;
+                    }else{
+                        return `http://${proxy[0]}:${proxy[1]}`;
+                    }
                 });
                 return true;
             } catch (err) {
