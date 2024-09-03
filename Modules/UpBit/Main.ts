@@ -22,7 +22,7 @@ export class Main extends MainHelper {
         this.shuffleProxyOrder()
         while (true) {
             try {
-                const requests = await Promise.race(Array.from({ length: 5 }, () => this.FrontendRequests.getNews()));
+                const requests = await Promise.race(Array.from({ length: 2 }, () => this.FrontendRequests.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
                 this.index++;
@@ -47,7 +47,7 @@ export class Main extends MainHelper {
             try {
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 
-                const firstResolved = await Promise.race(Array.from({ length: 5 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
+                const firstResolved = await Promise.race(Array.from({ length: 2 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
                 if (firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
@@ -105,6 +105,8 @@ const main = new Main()
 // main.runFrontendMode()
 Utils.sleep(2000).then(async () => {
     const requests = await new Main().FrontendRequests.getNews()
-    const  latestAnnouncmentId = requests.id+1
-    main.runIdMode(latestAnnouncmentId)
+    if(requests && requests.id){
+        const  latestAnnouncmentId = requests.id+1
+        main.runIdMode(latestAnnouncmentId)
+    }
 })
