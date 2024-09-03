@@ -4,30 +4,34 @@ import { Utils } from "../../Helpers/Utils";
 import { GoClient } from "../../HttpClient/GoClient";
 import { MainHelpers } from "./MainHelpers";
 import { FrontendRequest } from "./Requests/FrontendRequest";
-import fs from 'fs'
 import { BackendRequest } from "./Requests/BackendRequest";
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
 export class Main extends MainHelpers {
     GoClient = new GoClient()
     FrontendRequest = new FrontendRequest(this);
     BackendRequest = new BackendRequest(this);
     index = 0
-    latestAnnouncmentId: any;
 
     async frontEndMonitor() {
         let index = 0
-
+        let oldLatestAnnouncmentData
         while (true) {
             try {
-                const latestAnnouncementId = await this.FrontendRequest.run()
-                if (index === 0) this.latestAnnouncmentId = latestAnnouncementId
+                const latestAnnouncementData = await this.FrontendRequest.run()
 
-                if (!latestAnnouncementId || !this.latestAnnouncmentId || !latestAnnouncementId.title || this.latestAnnouncmentId.title) continue
+                if (index === 0) oldLatestAnnouncmentData = latestAnnouncementData
 
-                if (latestAnnouncementId && this.latestAnnouncmentId && latestAnnouncementId.title && latestAnnouncementId.title !== this.latestAnnouncmentId.title) {
-                    Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementId), 'success')
-                    latestAnnouncementId.listed_at = latestAnnouncementId.releaseDate
-                    this.latestAnnouncmentId = latestAnnouncementId
-                    const myParas = DiscordHelpers.buildWebhookParamsForNews(latestAnnouncementId, { Mode: "Frontend", Website: "Binance" });
+                if (!latestAnnouncementData || !oldLatestAnnouncmentData || !latestAnnouncementData.title || !oldLatestAnnouncmentData.title){
+                     Utils.log('Failed to get the latest Announcment Data' , 'error')
+                     continue;
+                }
+
+                if (latestAnnouncementData && oldLatestAnnouncmentData && latestAnnouncementData.title && latestAnnouncementData.title !== oldLatestAnnouncmentData.title) {
+                    Utils.log('New Listing Found Using **FRONTEND!** Request : ' + JSON.stringify(latestAnnouncementData), 'success')
+                    latestAnnouncementData.listed_at = latestAnnouncementData.releaseDate
+                    oldLatestAnnouncmentData = latestAnnouncementData
+                    const myParas = DiscordHelpers.buildWebhookParamsForNews(latestAnnouncementData, { Mode: "Frontend", Website: "Binance" });
                     DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
                 }
                 index++;
@@ -44,6 +48,8 @@ export class Main extends MainHelpers {
     async backendMonitor() {
         let index = 0
         let pageSize = 1
+        let oldLatestAnnouncmentData
+
         while (true) {
             try {
                 const latestAnnouncementId = await this.BackendRequest.run(pageSize);
@@ -51,9 +57,9 @@ export class Main extends MainHelpers {
 
                 if (!latestAnnouncementId || !latestAnnouncementId.latestData) continue
 
-                if (index === 0) this.latestAnnouncmentId = latestAnnouncementId.latestData
+                if (index === 0) oldLatestAnnouncmentData = latestAnnouncementId.latestData
                 index++;
-                const data = this.compareArrays(this.latestAnnouncmentId || [], latestAnnouncementId.latestData)
+                const data = this.compareArrays(oldLatestAnnouncmentData || [], latestAnnouncementId.latestData)
                 for (const dataItem of data) {
                     if (dataItem.originalItem && dataItem.newItem) {
                         Utils.log('New Listing Found Using **BACKEND!** Request : ' + JSON.stringify(dataItem), 'success')
@@ -65,7 +71,7 @@ export class Main extends MainHelpers {
                             cacheStatus: latestAnnouncementId.cacheStatus,
                             skipBypass: latestAnnouncementId.skipBypass
                         }
-                        this.latestAnnouncmentId = latestAnnouncementId.latestData
+                        oldLatestAnnouncmentData = latestAnnouncementId.latestData
                         const myParas = DiscordHelpers.buildWebhookParamsForNews(webhookData, { Mode: "Backend", Website: "Binance" });
                         DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
                     }
@@ -84,4 +90,4 @@ export class Main extends MainHelpers {
 
 }
 new Main().frontEndMonitor()
-new Main().backendMonitor()
+// new Main().backendMonitor()

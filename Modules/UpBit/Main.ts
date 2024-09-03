@@ -20,15 +20,14 @@ export class Main extends MainHelper {
         this.shuffleProxyOrder()
         while (true) {
             try {
-                const requests = await this.FrontendRequests.getNews();
+                const requests = await Promise.race(Array.from({ length: 5 }, () => this.FrontendRequests.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
                 this.index++;
                 if (newListingFirst && newListingFirst.title && newListingFirst.title !== this.LatestListing?.title) {
                     this.LatestListing = newListingFirst
-                    Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(this.LatestListing) + " Is Equal " + (this.LatestListing.title === newListingFirst), 'success')
                     if (this.index === 1 || !newListingFirst) continue
-
+                    Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(this.LatestListing) + " Is Equal " + (this.LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Frontend")
                 }
                 Utils.sleep(100)
@@ -45,7 +44,8 @@ export class Main extends MainHelper {
         while (true && latestAnnouncmentId) {
             try {
                 // Process the first response as soon as it finishes and return the result of first request promise 
-                const firstResolved = await this.IDModeRequests.getNews(latestAnnouncmentId) as any
+                
+                const firstResolved = await Promise.race(Array.from({ length: 5 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
                 if (firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
@@ -55,11 +55,11 @@ export class Main extends MainHelper {
                     await Utils.sleep(longWait)
                     continue;
                 } else {
-                    Utils.log('Failing to get Id Mode Response , Sleeping 30 Seconds ', 'error')
+                    Utils.log('Failed to get Id Mode Response , Sleeping 30 Seconds ', 'error')
                     await Utils.sleep(longWait)
                     continue;
                 }
-                await Utils.sleep(500)
+                await Utils.sleep(200)
             } catch (err) {
                 Utils.log("Error In Monitor ID Mode" + err, 'error')
                 await Utils.sleep(200)
@@ -87,7 +87,6 @@ export class Main extends MainHelper {
 
     getConfig() {
         const rootDir = path.resolve(__dirname, "../../");
-
         // Construct the path to 'logs.txt' in the root directory
         const logFilePath = path.join(rootDir, 'JDatabase\\Config.json');
         const myConfig = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
@@ -106,5 +105,4 @@ Utils.sleep(2000).then(async () => {
     const requests = await new Main().FrontendRequests.getNews()
     const  latestAnnouncmentId = requests.id+1
     main.runIdMode(latestAnnouncmentId)
-    main.runTradisRequest()
 })
