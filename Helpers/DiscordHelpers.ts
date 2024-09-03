@@ -34,10 +34,7 @@ export class DiscordHelpers {
         //@ts-ignore
         if (!isError) delete configuration.httpsAgent
         axios.post(webhookUrl, params, configuration).catch(async (err: any) => {
-            Utils.log('Failed to send webhook ' + err)
-            if (err.response && err.response.status && (err.response.status !== 429 || err.response.status !== 400)) {
-                return this.sendWebhook(webhookUrl, params)
-            }
+            Utils.log('Failed to send webhook ' + err , 'error')
         })
     }
 
