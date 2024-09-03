@@ -47,8 +47,8 @@ export class Main extends MainHelper {
             try {
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 
-                const firstResolved = await Promise.race(Array.from({ length: 2 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
-                if (firstResolved.success === false) {
+                const firstResolved = await Promise.race(Array.from({ length: 1 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
+                if (firstResolved && firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
                 } else if (firstResolved.title) {
                     Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncmentId, 'success')
@@ -64,7 +64,7 @@ export class Main extends MainHelper {
                 await Utils.sleep(200)
             } catch (err) {
                 Utils.log("Error In Monitor ID Mode" + err, 'error')
-                await Utils.sleep(200)
+                await Utils.sleep(longWait)
             }
         }
     }
@@ -102,7 +102,7 @@ export class Main extends MainHelper {
 }
 
 const main = new Main()
-// main.runFrontendMode()
+main.runFrontendMode()
 Utils.sleep(2000).then(async () => {
     const requests = await new Main().FrontendRequests.getNews()
     if(requests && requests.id){

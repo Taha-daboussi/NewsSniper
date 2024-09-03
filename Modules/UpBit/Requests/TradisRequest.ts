@@ -68,7 +68,7 @@ export class TradisRequest {
             }
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
-            Utils.log(`Failed to get announcements. UserAgent: ${userAgent}. Error: ${err.message}`, 'error');
+            Utils.log(`Failed to get Tradis announcements. UserAgent: ${userAgent}. Error: ${err.message}`, 'error');
         }
     }
 
