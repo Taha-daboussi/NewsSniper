@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 export class Utils {
@@ -110,5 +111,19 @@ export class Utils {
         return coinNames;
       }
 
+    static makeid(length : number) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        return result;
+    }
 
+    static implyCacheBypass(){
+        return `${Utils.makeid(10)}=` + Math.random() + `&${Utils.makeid(10)}=` + randomUUID()
+    }
 }
