@@ -77,7 +77,7 @@ export class IDModeRequests {
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
             if(err && err.response && err.response.data && err.response.data.success === false){
-                    return {success : false }
+                 return {success : false }
             }
             Utils.log(`Failed to get **ID MODE** announcements. UserAgent: ${userAgent}. Error: ${err.message}` + url, 'error');
         }
