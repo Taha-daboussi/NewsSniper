@@ -126,4 +126,8 @@ export class Utils {
     static implyCacheBypass(){
         return `${Utils.makeid(10)}=` + Math.random() + `&${Utils.makeid(10)}=` + randomUUID()
     }
+
+    static randomeNumber(min : number , max : number){
+        return Math.floor(Math.random() * (max - min + 1) + min)
+    }
 }
