@@ -90,4 +90,4 @@ export class Main extends MainHelpers {
 
 }
 new Main().frontEndMonitor()
-// new Main().backendMonitor()
+new Main().backendMonitor()
