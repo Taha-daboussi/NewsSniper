@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-import { DiscordHelpers } from "../../../Helpers/DiscordHelpers";
 import { Utils } from "../../../Helpers/Utils";
 import { Main } from "../Main";
 
@@ -35,10 +33,10 @@ export class IDModeRequests {
     async getNews(latestAnnouncementId : number): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         const skipBypass = false
-        const url = `https://api-manager.upbit.com/api/v1/announcements/` + latestAnnouncementId + `?&${Utils.makeid(10)}=` + Math.random() + `&${Utils.makeid(10)}=` + randomUUID();
+        const url = `https://api-manager.upbit.com/api/v1/announcements/` + latestAnnouncementId + `?&` + Utils.implyCacheBypass();
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const userAgentData = Utils.parseUserAgent(userAgent)
-        Utils.log(`Getting Id Mode announcements || skipBypass : ` + skipBypass, "pending");
+        Utils.log(`Getting Id Mode announcements`, "pending");
 
         const headers = {
             Connection: 'keep-alive',
@@ -70,10 +68,10 @@ export class IDModeRequests {
             if (response && response.body) {
                 if(!response.body.success){
                     const latestData  : IDModeResponse = response.body
-                    return {...latestData , delay : duration , cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass };
+                    return {...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass};
                 }else if (response.body.success){
                     const latestData  : IDModeResponse = response.body.data
-                    return { ...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass }
+                    return {...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass};
                 }
             }
             throw new Error(JSON.stringify(response.body))

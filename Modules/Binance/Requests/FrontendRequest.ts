@@ -22,9 +22,12 @@ export class FrontendRequest {
       'Sec-Fetch-User': '?1',
       'Sec-Fetch-Dest': 'document',
       'Accept-Encoding': 'gzip, deflate, br, zstd',
-      'Accept-Language': 'en-US,en;q=0.9'
+      'Accept-Language': 'en-US,en;q=0.9',
+      "Cache-Control": "no-store"
+      // "Cache-Control": "no-cache"
     }
-    const url = 'https://www.binance.com/en/support/announcement/new-cryptocurrency-listing?c=48&navId=48'
+    const navId = Utils.randomeNumber(1, 48);
+    const url = 'https://www.binance.com/en/support/announcement/new-cryptocurrency-listing?c=48&navId='+navId;
     const payload = {
       Url: url,
       method: "GET",
@@ -43,14 +46,14 @@ export class FrontendRequest {
       if (response && response.body) {
         var Data = JSON.parse(response.body.match(/"articles":?([\s\S]*?),"catalogs":/)[1])
         if(Data[0]){
-          Utils.log('Binance Announcments fetched successfully' , 'success');
-          return {...Data[0] , delay : endTime - startTime , cacheStatus : response.headers["X-Cache"]  , skipBypass : false } 
+          Utils.log('Binance Frontend Announcments fetched successfully | Cache ' + response.headers['x-cache'] + " | " +  response.headers['x-cache-proxy'] , 'success');
+          return {...Data[0] , delay : endTime - startTime , cacheStatus : (response.headers["x-cache"]  + " || " + response.headers['x-cache-proxy']) , skipBypass : false } 
         }
       }
 
       throw new Error(response.body);
     } catch (err) {
-      // Utils.log('Error while fetching Binance Announcments' + err, "error");
+      Utils.log('Error while fetching Binance Announcments' + err, "error");
     }
   }
 }

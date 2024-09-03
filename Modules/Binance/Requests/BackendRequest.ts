@@ -42,7 +42,7 @@ export class BackendRequest {
 
             if (response && response.body) {
                 if (response.body?.data?.catalogs) {
-                    Utils.log('Binance Announcments fetched successfully', 'success');
+                    Utils.log('Binance Backend Announcments fetched successfully', 'success');
                     const myData = response.body.data.catalogs.map((res : any )=>{
                         return res.articles[0]
                     })
@@ -50,9 +50,9 @@ export class BackendRequest {
                 }
             }
 
-            throw new Error('Error while fetching Binance Announcments');
+            throw new Error('Error while fetching  Binance Backend Announcments');
         } catch (err) {
-            // Utils.log('Error while fetching Binance Announcments' + err, "error");
+            Utils.log('Error while fetching Binance Announcments' + err, "error");
         }
     }
 
