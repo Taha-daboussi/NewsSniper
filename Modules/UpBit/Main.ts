@@ -50,7 +50,7 @@ export class Main extends MainHelper {
                 const firstResolved = await Promise.race(Array.from({ length: 1 }, () => this.IDModeRequests.getNews(latestAnnouncmentId)));
                 if (firstResolved && firstResolved.success === false) {
                     Utils.log("No update yet on the next Id " + JSON.stringify((firstResolved)));
-                } else if (firstResolved.title) {
+                } else if (firstResolved && firstResolved.title) {
                     Utils.log('New Listing Found Using **ID!** Request : ' + JSON.stringify(firstResolved) + " Announcment Id : " + latestAnnouncmentId, 'success')
                     this.newListingAlert(firstResolved, "IDMode")
                     latestAnnouncmentId++
