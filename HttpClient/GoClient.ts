@@ -3,6 +3,8 @@ import { Utils } from '../Helpers/Utils';
 import { Proxy } from './Proxy';
 import { initGoClinet } from './initGoClient';
 import axios from 'axios';
+import { request, Dispatcher, ProxyAgent } from 'undici';
+
 const _initGoClinet = new initGoClinet();
 
 interface Payload {
@@ -67,32 +69,36 @@ export class GoClient implements IGoClient {
                     console.error('Invalid URL:', forcedProxy);
                 }
             }
-            let response;
             let httpsAgent
             if(requestPayloadData.proxy){
                 httpsAgent = new HttpsProxyAgent(requestPayloadData.proxy as string)
             }
-            const configuration = {
+ 
+            let  agentOptions: any = {};
+            if (requestPayloadData.proxy) {
+                agentOptions = new ProxyAgent(requestPayloadData.proxy);
+
+            }
+
+            
+            const requestOptions: any = {
+                method: requestPayloadData.method,
                 headers: requestPayloadData.headers,
-                httpsAgent,
-                timeout: 1000,
-                signal: AbortSignal.timeout(1000)
-            }
-            if (requestPayloadData.method === "POST") {
-                response = await axios.post(requestPayloadData.Url, requestPayloadData.body , configuration)as any 
-            } else if (requestPayloadData.method === "GET") {
-                //@ts-ignore
-                response = await axios.get(requestPayloadData.Url,configuration) as any 
-            } else {
-                throw new Error('Method not supported')
-            }
-            response.body  =  response.data
-            return Promise.resolve(response);
+                body: requestPayloadData.body,
+                dispatcher: agentOptions,
+              };
+
+              const response = await request(requestPayloadData.Url, requestOptions) as any ;
+              const responseData = await response.body.json();
+              response.body = responseData;
+        
+              return Promise.resolve(response);
         } catch (e: any) {
             if (e.message && e?.message.includes('connect ECONNREFUSED 127.0.0.1')) {
                 _initGoClinet.initMyGoClient(false)
             }
             return Promise.reject(e);
+
         }
     }
 

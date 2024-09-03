@@ -101,12 +101,21 @@ export class Main extends MainHelper {
     }
 }
 
-const main = new Main()
-main.runFrontendMode()
-Utils.sleep(2000).then(async () => {
-    const requests = await new Main().FrontendRequests.getNews()
-    if(requests && requests.id){
-        const  latestAnnouncmentId = requests.id+1
-        main.runIdMode(latestAnnouncmentId)
+const main = new Main();
+
+// Calculate the time until 9pm in Tokyo
+const tokyoTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" });
+const targetTime = new Date(tokyoTime);
+targetTime.setHours(21, 0, 0, 0);
+const timeUntilLaunch = targetTime.getTime() - Date.now();
+
+// Wait until it's 9pm in Tokyo
+setTimeout(async () => {
+    main.runFrontendMode();
+    await Utils.sleep(2000);
+    const requests = await new Main().FrontendRequests.getNews();
+    if (requests && requests.id) {
+        const latestAnnouncmentId = requests.id + 1;
+        main.runIdMode(latestAnnouncmentId);
     }
-})
+}, timeUntilLaunch);
