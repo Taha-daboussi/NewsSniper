@@ -7,6 +7,8 @@ import fs from 'fs'
 import { IDModeRequests } from "./Requests/IDModeRequest";
 import path from "path";
 import { TradisRequest } from "./Requests/TradisRequest";
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
 export class Main extends MainHelper {
     GoClient = new GoClient()
     FrontendRequests = new FrontendRequests(this)
@@ -100,7 +102,7 @@ export class Main extends MainHelper {
 }
 
 const main = new Main()
-main.runFrontendMode()
+// main.runFrontendMode()
 Utils.sleep(2000).then(async () => {
     const requests = await new Main().FrontendRequests.getNews()
     const  latestAnnouncmentId = requests.id+1

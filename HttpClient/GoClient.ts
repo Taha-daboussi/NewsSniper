@@ -92,9 +92,7 @@ export class GoClient implements IGoClient {
             if (e.message && e?.message.includes('connect ECONNREFUSED 127.0.0.1')) {
                 _initGoClinet.initMyGoClient(false)
             }
-            Utils.log('Error while sending request ' + JSON.stringify(e.message), 'error');
             return Promise.reject(e);
-
         }
     }
 
