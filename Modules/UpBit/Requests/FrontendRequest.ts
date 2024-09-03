@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { DiscordHelpers } from "../../../Helpers/DiscordHelpers";
 import { Utils } from "../../../Helpers/Utils";
 import { Main } from "../Main";
@@ -78,10 +79,11 @@ export class FrontendRequests {
     async getNews(skipBypass = false): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         // Create an array of promises for all the requests
-        const url = `https://api-manager.upbit.com/api/v1/announcements?os=ios&page=1&per_page=20&category=all`+ (skipBypass ? "" : `&bypass-cf-cache=` + Math.random())
+        const os = ["ios" , 'web' , 'android']
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=${os[Math.floor(Math.random() * os.length)]}&page=1&per_page=1&category=all&`+ Utils.implyCacheBypass();
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const userAgentData = Utils.parseUserAgent(userAgent)
-        Utils.log(`Getting Id Mode announcements || skipBypass : ` + skipBypass, "pending");
+        Utils.log(`Getting Frontend Mode announcements || skipBypass : ` + skipBypass, "pending");
 
         const headers = {
             Connection: 'keep-alive',
@@ -112,7 +114,7 @@ export class FrontendRequests {
             if (response && response.body && response.body.success) {
                 const duration = endTime - startTime;  // Calculate the duration
                 const data = response.body.data
-                Utils.log(`Got Frontend announcements ` + " Response Time : " + duration + " MS" + " || skipBypass : " + skipBypass + " || Cache Status : " + response.headers['Cf-Cache-Status'][0] , "success");
+                Utils.log(`Got Frontend announcements ` + " Response Time : " + duration + " MS" + " || skipBypass : " + skipBypass + " || Cache Status : " + response.headers['cf-cache-status'] , "success");
                 const latestData = this.parseNews(data)
                 return { ...latestData, delay: duration, cacheStatus: response.headers['Cf-Cache-Status'] , skipBypass }
             }
