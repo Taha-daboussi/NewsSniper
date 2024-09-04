@@ -90,6 +90,8 @@ export class FrontendRequests {
             'Accept-Language': 'ko-KR, ko;q=1, en-GB;q=0.1',
             Origin: 'https://upbit.com',
             Referer: 'https://upbit.com/',
+            Priority: 'u=1, i',
+
             'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
             'Sec-Ch-Ua-Mobile': '?0',
             'Sec-Ch-Ua-Platform': '"Windows"',
