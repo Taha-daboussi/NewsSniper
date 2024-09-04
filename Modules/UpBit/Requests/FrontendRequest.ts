@@ -84,18 +84,18 @@ export class FrontendRequests {
         Utils.log(`Getting Frontend Mode announcements`, "pending");
 
         const headers = {
-            Connection: 'keep-alive',
-            'sec-ch-ua': userAgentData['sec-ch-ua'],
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
             Accept: 'application/json',
-            'Accept-Language': 'en-KR, en;q=1, en-US;q=0.1',
-            'sec-ch-ua-mobile': userAgentData['sec-ch-ua-mobile'],
-            'User-Agent': userAgent,
-            'sec-ch-ua-platform': userAgentData['sec-ch-ua-platform'],
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
+            'Accept-Encoding': 'deflate',
+            'Accept-Language': 'ko-KR, ko;q=1, en-GB;q=0.1',
+            Origin: 'https://upbit.com',
             Referer: 'https://upbit.com/',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-site'
           };
 
         const payload = {
