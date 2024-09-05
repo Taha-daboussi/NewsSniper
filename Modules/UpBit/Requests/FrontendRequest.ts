@@ -78,9 +78,9 @@ export class FrontendRequests {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         // Create an array of promises for all the requests
         const os = ["ios" , 'web' , 'android']
-        const url = `https://api-manager.upbit.com/api/v1/announcements?os=${os[Math.floor(Math.random() * os.length)]}&page=1&per_page=${Utils.randomeNumber(1,20)}&category=all&`+ Utils.implyCacheBypass();
+        const osIndex = os[Math.floor(Math.random() * os.length)]
+        const url = `https://api-manager.upbit.com/api/v1/announcements?os=${osIndex}&page=1&per_page=${Utils.randomeNumber(1,20)}&category=all&`+ Utils.implyCacheBypass();
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const userAgentData = Utils.parseUserAgent(userAgent)
         Utils.log(`Getting Frontend Mode announcements`, "pending");
 
         const headers = {
@@ -91,13 +91,14 @@ export class FrontendRequests {
             Origin: 'https://upbit.com',
             Referer: 'https://upbit.com/',
             Priority: 'u=1, i',
-
             'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
-            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Mobile': '?' +  osIndex === 'web' ? "0"  : '1',
             'Sec-Ch-Ua-Platform': '"Windows"',
             'Sec-Fetch-Dest': 'empty',
             'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-site'
+            'Sec-Fetch-Site': 'same-site',
+            "Upbit-Platform": osIndex === 'web' ?"WEBAPP":"MOBILE_WEB"
+
           };
 
         const payload = {
@@ -125,3 +126,5 @@ export class FrontendRequests {
         }
     }
 }
+
+//https://api.binance.com/sapi/v1/capital/config/getall

@@ -1,28 +1,8 @@
-import { DiscordHelpers } from "../../../Helpers/DiscordHelpers";
 import { Utils } from "../../../Helpers/Utils";
 import { Main } from "../Main";
 
-export interface IDModeResponse {
-    listed_at: string
-    first_listed_at: string
-    id: number
-    title: string
-    category: string
-    need_new_badge: boolean
-    need_update_badge: boolean
-    body: string
-    body_url: string
-    attachments: any[]
-  }
 
-interface IDModeGetNewsResponse extends IDModeResponse {
-    delay : number
-    cacheStatus : string
-    skipBypass : boolean
-}  
-
-
-export class TradisRequest {
+export class SearchRequest {
     Main: Main;
     CacheStats  :any = {revalidated : 0 ,hit : 0}
     counter: number = 0;
@@ -33,11 +13,10 @@ export class TradisRequest {
 
     async getNews(): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
-        const skipBypass = false
-        const url = 'https://api.tardis.dev/v1/exchanges/upbit'
+        const url = 'https://api-manager.upbit.com/api/v1/announcements/news/search?category=all&os=android&per_page=20&page=1&search='
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const userAgentData = Utils.parseUserAgent(userAgent)
-        Utils.log(`Getting Tradins Mode announcements || skipBypass : ` + skipBypass, "pending");
+        Utils.log(`Getting Search  Mode announcements ` , "pending");
 
         const headers = {
             Connection: 'keep-alive',
@@ -52,7 +31,7 @@ export class TradisRequest {
             'Sec-Fetch-Dest': 'empty',
             Referer: 'https://upbit.com/',
             'Accept-Encoding': 'gzip, deflate, br, zstd',
-          };
+        };
 
         const payload = {
             Url: url,
@@ -63,19 +42,12 @@ export class TradisRequest {
         try {
             const response = await this.Main.GoClient.sendRequest(payload);
             if (response && response.body) {
-                const latestCoin  = this.getLatestCoin(response.body.availableSymbols)
-               return latestCoin
+                Utils.log('Got Search announcements ' + response.body.data.content, 'success');
+               return  response.body.data.notices[0]
             }
             throw new Error(JSON.stringify(response.body))
         } catch (err : any ) {
-            Utils.log(`Failed to get Tradis announcements. UserAgent: ${userAgent}. Error: ${err.message}`, 'error');
+            Utils.log(`Failed to get Search announcements. UserAgent: ${userAgent}. Error: ${err.message}`, 'error');
         }
-    }
-
-    getLatestCoin(availableSinceArray : Array<Record<any,any>>){
-        const latestAvailableSince = availableSinceArray.reduce((latest, item) => {
-            return new Date(item.availableSince) > new Date(latest.availableSince) ? item : latest;
-          }, availableSinceArray[0]);
-          return latestAvailableSince
     }
 }

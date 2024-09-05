@@ -6,35 +6,86 @@ import { FrontendRequests, IFrontendRequest } from "./Requests/FrontendRequest";
 import fs from 'fs'
 import { IDModeRequests } from "./Requests/IDModeRequest";
 import path from "path";
-import { TradisRequest } from "./Requests/TradisRequest";
+import { EmeregencyEpRequest } from "./Requests/EmergencyEpRequest";
+import { SearchRequest } from "./Requests/SearchRequest";
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 export class Main extends MainHelper {
     GoClient = new GoClient()
-    FrontendRequests = new FrontendRequests(this)
-    IDModeRequests = new IDModeRequests(this)
-    TradisRequest = new TradisRequest(this)
+    FrontendRequests = new FrontendRequests(this);
+    IDModeRequests = new IDModeRequests(this);
+    EmergencyEpRequests = new EmeregencyEpRequest(this);
+    SearchRequest = new SearchRequest(this);
     LatestListing = {} as any
+
     Config = this.getConfig();
     index = 0
     latestAnnouncmentId = 0
+    sentData = [] as any 
     async runFrontendMode() {
+        let LatestListing
         this.shuffleProxyOrder()
         while (true) {
             try {
-                const requests = await Promise.race(Array.from({ length: 2 }, () => this.FrontendRequests.getNews()));
+                const requests = await Promise.race(Array.from({ length: 1 }, () => this.FrontendRequests.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
                 this.index++;
-                if (newListingFirst && newListingFirst.title && newListingFirst.title !== this.LatestListing?.title) {
-                    this.LatestListing = newListingFirst
+                if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
+                    LatestListing = newListingFirst
                     if (this.index === 1 || !newListingFirst) continue
-                    Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(this.LatestListing) + " Is Equal " + (this.LatestListing.title === newListingFirst), 'success')
+                    Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Frontend")
                 }
                 Utils.sleep(100)
             } catch (err) {
                 Utils.log("Error In Monitor Frontend Mode" + err, 'error')
+                await Utils.sleep(200)
+            }
+        }
+    }
+
+    async runEmergencyEpRequests() {
+        this.shuffleProxyOrder()
+        let LatestListing 
+        while (true) {
+            try {
+                const requests = await Promise.race(Array.from({ length: 1 }, () => this.EmergencyEpRequests.getNews()));
+                // Process the first response as soon as it finishes and return the result of first request promise 
+                const newListingFirst = requests;
+                this.index++;
+                if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
+                    LatestListing = newListingFirst
+                    if (this.index === 1 || !newListingFirst) continue
+                    Utils.log('New Listing Found  **Emergency** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
+                    this.newListingAlert(newListingFirst, "Emergency")
+                }
+                Utils.sleep(300)
+            } catch (err) {
+                Utils.log("Error In Monitor Emergency Mode" + err, 'error')
+                await Utils.sleep(200)
+            }
+        }
+    }
+
+    async runSearchRequest() {
+        let LatestListing;
+        this.shuffleProxyOrder()
+        while (true) {
+            try {
+                const requests = await Promise.race(Array.from({ length: 1 }, () => this.SearchRequest.getNews()));
+                // Process the first response as soon as it finishes and return the result of first request promise 
+                const newListingFirst = requests;
+                this.index++;
+                if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
+                    LatestListing = newListingFirst
+                    if (this.index === 1 || !newListingFirst) continue
+                    Utils.log('New Listing Found  **Search** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
+                    this.newListingAlert(newListingFirst, "Search")
+                }
+                Utils.sleep(300)
+            } catch (err) {
+                Utils.log("Error In Monitor Emerhecyn Mode" + err, 'error')
                 await Utils.sleep(200)
             }
         }
@@ -69,23 +120,6 @@ export class Main extends MainHelper {
         }
     }
 
-    async runTradisRequest() {
-        let latestData = ''
-        let index = 0
-        while (true) {
-            try {
-                const response = await this.TradisRequest.getNews();
-                if (index === 0) latestData = response
-                if (JSON.stringify(response) !== JSON.stringify(latestData)) {
-                    latestData = response
-                    Utils.log('New Listing Found Using **TRADIS!** Request : ' + response, 'success')
-                    this.newListingAlert(response, "Tradis")
-                }
-            } catch (err) {
-                Utils.log("Error In Monitor Tradis Request" + err, 'error')
-            }
-        }
-    }
 
     getConfig() {
         const rootDir = path.resolve(__dirname, "../../");
@@ -95,27 +129,29 @@ export class Main extends MainHelper {
         return myConfig
     }
 
-    newListingAlert(newListingSecond: IFrontendRequest, Mode: "Frontend" | "Tradis" | "IDMode") {
+    newListingAlert(newListingSecond: IFrontendRequest, Mode: "Frontend" | "Tradis" | "IDMode" | "Emergency" | "Search") {
         const params = DiscordHelpers.buildWebhookParamsForNews(newListingSecond as any, { Website: "Upbit", Mode: Mode });
+        if(this.sentData.includes(newListingSecond)) {
+            Utils.log('Already sent a webhook') ; 
+            return ; 
+        } 
+        this.sentData.push(newListingSecond)
         DiscordHelpers.sendWebhook(this.Config.DiscordWebhook, params);
     }
 }
 
 const main = new Main();
 
-// Calculate the time until 9pm in Tokyo
-const tokyoTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" });
-const targetTime = new Date(tokyoTime);
-targetTime.setHours(21, 0, 0, 0);
-const timeUntilLaunch = targetTime.getTime() - Date.now();
-
 // Wait until it's 9pm in Tokyo
-setTimeout(async () => {
-    main.runFrontendMode();
-    await Utils.sleep(2000);
+
+main.runFrontendMode();
+Utils.sleep(2000).then(async res=>{
     const requests = await new Main().FrontendRequests.getNews();
     if (requests && requests.id) {
         const latestAnnouncmentId = requests.id + 1;
         main.runIdMode(latestAnnouncmentId);
+        main.runEmergencyEpRequests();
+        main.runSearchRequest()
     }
-}, timeUntilLaunch);
+})
+   
