@@ -38,7 +38,7 @@ export class Main extends MainHelper {
                     Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Frontend")
                 }
-                Utils.sleep(100)
+               await  Utils.sleep(100)
             } catch (err) {
                 Utils.log("Error In Monitor Frontend Mode" + err, 'error')
                 await Utils.sleep(200)
@@ -62,7 +62,7 @@ export class Main extends MainHelper {
                     Utils.log('New Listing Found  **Emergency** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Emergency")
                 }
-                Utils.sleep(1000)
+                await Utils.sleep(1000)
             } catch (err) {
                 Utils.log("Error In Monitor Emergency Mode" + err, 'error')
                 await Utils.sleep(200)
@@ -86,7 +86,7 @@ export class Main extends MainHelper {
                     Utils.log('New Listing Found  **Search** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Search")
                 }
-                Utils.sleep(1000)
+                await Utils.sleep(3000)
             } catch (err) {
                 Utils.log("Error In Monitor Emerhecyn Mode" + err, 'error')
                 await Utils.sleep(200)
