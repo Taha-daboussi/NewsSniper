@@ -21,6 +21,8 @@
     "create-hmac": "^1.1.7",
     "discord.js": "^14.15.3",
     "https-proxy-agent": "^7.0.5",
-    "mongoose": "^8.6.0"
+    "mongoose": "^8.6.0",
+    "undici": "^6.19.8",
+    "ws": "^8.18.0"
   }
 }
