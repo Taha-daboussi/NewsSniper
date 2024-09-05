@@ -25,15 +25,16 @@ export class Main extends MainHelper {
     async runFrontendMode() {
         let LatestListing
         this.shuffleProxyOrder()
+        let index = 0 
         while (true) {
             try {
                 const requests = await Promise.race(Array.from({ length: 1 }, () => this.FrontendRequests.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
-                this.index++;
+                index++;
                 if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
                     LatestListing = newListingFirst
-                    if (this.index === 1 || !newListingFirst) continue
+                    if (index === 1 || !newListingFirst) continue
                     Utils.log('New Listing Found : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Frontend")
                 }
@@ -48,15 +49,16 @@ export class Main extends MainHelper {
     async runEmergencyEpRequests() {
         this.shuffleProxyOrder()
         let LatestListing 
+        let index = 0
         while (true) {
             try {
                 const requests = await Promise.race(Array.from({ length: 1 }, () => this.EmergencyEpRequests.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
-                this.index++;
+                index++;
                 if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
                     LatestListing = newListingFirst
-                    if (this.index === 1 || !newListingFirst) continue
+                    if (index === 1 || !newListingFirst) continue
                     Utils.log('New Listing Found  **Emergency** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Emergency")
                 }
@@ -70,16 +72,17 @@ export class Main extends MainHelper {
 
     async runSearchRequest() {
         let LatestListing;
+        let index = 0
         this.shuffleProxyOrder()
         while (true) {
             try {
                 const requests = await Promise.race(Array.from({ length: 1 }, () => this.SearchRequest.getNews()));
                 // Process the first response as soon as it finishes and return the result of first request promise 
                 const newListingFirst = requests;
-                this.index++;
+                index++;
                 if (newListingFirst && newListingFirst.title && newListingFirst.title !== LatestListing?.title) {
                     LatestListing = newListingFirst
-                    if (this.index === 1 || !newListingFirst) continue
+                    if (index === 1 || !newListingFirst) continue
                     Utils.log('New Listing Found  **Search** : ' + JSON.stringify(newListingFirst) + " OLD Listing : " + JSON.stringify(LatestListing) + " Is Equal " + (LatestListing.title === newListingFirst), 'success')
                     this.newListingAlert(newListingFirst, "Search")
                 }
