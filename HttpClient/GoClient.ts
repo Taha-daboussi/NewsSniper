@@ -1,12 +1,8 @@
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import { Utils } from '../Helpers/Utils';
+import { HttpsAgent } from './HttpsAgent';
 import { Proxy } from './Proxy';
 import { initGoClinet } from './initGoClient';
-import axios from 'axios';
-import { request, Dispatcher, ProxyAgent } from 'undici';
-
 const _initGoClinet = new initGoClinet();
-
 interface Payload {
     method: string;
     headers: any;
@@ -17,9 +13,8 @@ interface Payload {
     headersOrder?: string[];
     withoutCookieJar?: boolean;
     followRedirects?: boolean
-    timeout?: number
+    timeout? : number
 }
-
 interface IGoClient {
     sperationType: string;
     myProxies: any;
@@ -45,61 +40,49 @@ export class GoClient implements IGoClient {
      * @param myProxyFile The proxy file
      * @returns The response object
      */
-    async sendRequest(requestPayloadData: Payload, myProxyFile: any = this.proxyFile, forcedProxy: string = '') {
+    async sendRequest(requestPayloadData: Payload, myProxyFile: any = this.proxyFile , forcedProxy : string = '') {
         let raw
         try {
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy)
                 requestPayloadData.sessionId = requestPayloadData.proxy.toString();
-
             const mySelectedProxy = this.Proxy.getMyProxy(this.proxyFile || myProxyFile);
             if (mySelectedProxy) requestPayloadData.proxy = mySelectedProxy
-
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy) requestPayloadData.sessionId = requestPayloadData.proxy.toString()
-            if (!requestPayloadData.Url.includes('magiceden') && !requestPayloadData.Url.includes('opensea')) {
+            if (!requestPayloadData.Url.includes('magiceden') && !requestPayloadData.Url.includes('opensea')  ) {
                 process.env.NODE_ENV === 'development' ? requestPayloadData.proxy = 'http://127.0.0.1:8876' : ''
             }
             if (forcedProxy) {
                 try {
-                    // Attempt to create a new URL object with forcedProxy
-                    new URL(forcedProxy);
-                    // If successful, forcedProxy is a valid URL
-                    requestPayloadData.proxy = forcedProxy;
+                  // Attempt to create a new URL object with forcedProxy
+                  new URL(forcedProxy);
+                  // If successful, forcedProxy is a valid URL
+                  requestPayloadData.proxy = forcedProxy;
                 } catch (e) {
-                    // If an error is thrown, forcedProxy is not a valid URL
-                    console.error('Invalid URL:', forcedProxy);
+                  // If an error is thrown, forcedProxy is not a valid URL
+                  console.error('Invalid URL:', forcedProxy);
                 }
-            }
-            let httpsAgent
-            if(requestPayloadData.proxy){
-                httpsAgent = new HttpsProxyAgent(requestPayloadData.proxy as string)
-            }
- 
-            let  agentOptions: any = {};
-            if (requestPayloadData.proxy) {
-                agentOptions = new ProxyAgent(requestPayloadData.proxy);
-
-            }
-
-            
-            const requestOptions: any = {
-                method: requestPayloadData.method,
+              }
+               raw = {
+                sessionId: requestPayloadData.proxy?.toString(),
+                proxyUrl: requestPayloadData.proxy,
+                certificatePinningHosts: {},
                 headers: requestPayloadData.headers,
-                body: requestPayloadData.body,
-                dispatcher: agentOptions,
-              };
-
-              const response = await request(requestPayloadData.Url, requestOptions) as any ;
-              const responseData = await response.body.json();
-              response.body = responseData;
-        
-              return Promise.resolve(response);
+                headerOrder: requestPayloadData.headersOrder,
+                requestUrl: requestPayloadData.Url,
+                requestMethod: requestPayloadData.method,
+                requestBody: requestPayloadData.body,
+                tlsClientIdentifier: 'chrome_117',
+                "skipRedirections": !requestPayloadData.followRedirects,
+                timeout : 60000 * 5
+            };
+            const response: any = await HttpsAgent.sendPostRequest(raw);
+            return Promise.resolve(response);
         } catch (e: any) {
             if (e.message && e?.message.includes('connect ECONNREFUSED 127.0.0.1')) {
                 _initGoClinet.initMyGoClient(false)
             }
+            Utils.log('Error while sending request ' + JSON.stringify(raw), 'error');
             return Promise.reject(e);
-
         }
     }
-
 }
