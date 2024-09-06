@@ -148,13 +148,3 @@ const main = new Main();
 // Wait until it's 9pm in Tokyo
 
 main.runFrontendMode();
-Utils.sleep(2000).then(async res=>{
-    const requests = await new Main().FrontendRequests.getNews();
-    if (requests && requests.id) {
-        const latestAnnouncmentId = requests.id + 1;
-        main.runIdMode(latestAnnouncmentId);
-        main.runEmergencyEpRequests();
-        main.runSearchRequest()
-    }
-})
-   

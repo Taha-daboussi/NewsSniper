@@ -44,7 +44,7 @@ export class IDModeRequests {
             'Accept-Encoding': 'gzip, deflate, br, zstd',
             'Accept-Language': 'ko-KR, ko;q=1, en-GB;q=0.1',
             Origin: 'https://upbit.com',
-            Priority: 'u=1, i',
+            Priority: 'u=0, i',
             Referer: 'https://upbit.com/',
             'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
             'Sec-Ch-Ua-Mobile': '?0',

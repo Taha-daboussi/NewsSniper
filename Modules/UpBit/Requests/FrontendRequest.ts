@@ -70,7 +70,7 @@ export class FrontendRequests {
 
     parseNews(announcmentsData: IAnnouncment["data"]) {
         // const tradeAnnouncments = announcmentsData.notices.filter(res => res.category === "Trade" && res.title.includes('Market Support'));
-        const latestList = this.getLatestListedAt([...announcmentsData.notices, ...announcmentsData.fixed_notices]);
+        const latestList = announcmentsData.notices[0]
         return latestList;
     }
 
@@ -90,15 +90,17 @@ export class FrontendRequests {
             'Accept-Language': 'ko-KR, ko;q=1, en-GB;q=0.1',
             Origin: 'https://upbit.com',
             Referer: 'https://upbit.com/',
-            Priority: 'u=1, i',
+            Priority: 'u=0, i',
             'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
             'Sec-Ch-Ua-Mobile': '?' +  osIndex === 'web' ? "0"  : '1',
             'Sec-Ch-Ua-Platform': '"Windows"',
             'Sec-Fetch-Dest': 'empty',
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Site': 'same-site',
-            "Upbit-Platform": osIndex === 'web' ?"WEBAPP":"MOBILE_WEB"
-
+            "Upbit-Platform": osIndex === 'web' ?"WEBAPP":"MOBILE_WEB",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Connection": "keep-alive" 
           };
 
         const payload = {
