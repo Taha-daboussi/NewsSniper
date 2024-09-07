@@ -5,12 +5,14 @@ import { GoClient } from "../../HttpClient/GoClient";
 import { MainHelpers } from "./MainHelpers";
 import { FrontendRequest } from "./Requests/FrontendRequest";
 import { BackendRequest } from "./Requests/BackendRequest";
+import { FutureRequest } from "./Requests/FutureListingRequest";
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 export class Main extends MainHelpers {
     GoClient = new GoClient()
     FrontendRequest = new FrontendRequest(this);
     BackendRequest = new BackendRequest(this);
+    FutureRequest = new FutureRequest(this);
     index = 0
 
     async frontEndMonitor() {
@@ -87,7 +89,40 @@ export class Main extends MainHelpers {
     }
 
 
+    async futureMonitor() {
+        let index = 0
+        let oldLatestAnnouncmentData
+        while (true) {
+            try {
+                const latestAnnouncementData = await this.FutureRequest.run()
+
+                if (index === 0) oldLatestAnnouncmentData = latestAnnouncementData
+
+                if (!latestAnnouncementData || !oldLatestAnnouncmentData || !latestAnnouncementData.title || !oldLatestAnnouncmentData.title){
+                     Utils.log('Failed to get the latest Announcment Data From FUture' , 'error')
+                     continue;
+                }
+
+                if (latestAnnouncementData && oldLatestAnnouncmentData && latestAnnouncementData.title && latestAnnouncementData.title !== oldLatestAnnouncmentData.title) {
+                    Utils.log('New Listing Found Using **FUTURE!** Request : ' + JSON.stringify(latestAnnouncementData), 'success')
+                    latestAnnouncementData.listed_at = latestAnnouncementData.releaseDate
+                    oldLatestAnnouncmentData = latestAnnouncementData
+                    const myParas = DiscordHelpers.buildWebhookParamsForNews(latestAnnouncementData, { Mode: "FUTURE", Website: "Binance" });
+                    DiscordHelpers.sendWebhook(this.Config.BinanceWebhook, myParas, false)
+                }
+                index++;
+
+                await Utils.sleep(100)
+            } catch (err) {
+                Utils.log("Error In Monitor FUTURE Mode" + err, 'error')
+                continue;
+            }
+
+        }
+    }
+
 
 }
-new Main().frontEndMonitor()
-new Main().backendMonitor()
+// new Main().frontEndMonitor()
+// new Main().backendMonitor()
+new Main().futureMonitor()

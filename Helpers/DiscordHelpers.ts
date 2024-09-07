@@ -60,7 +60,7 @@ export class DiscordHelpers {
                             inline: true,
                         }, {
                             name: 'Cache Status',
-                            value: data.cacheStatus && JSON.stringify(data.cacheStatus[0]) || "No Cache Status",
+                            value: Array.isArray(data.cacheStatus) ?  (JSON.stringify(data.cacheStatus[0]) || "No Cache Status") : (data.cacheStatus || "No Cache Status"),
                             inline: true,
                         }, {
                             name: "isUsingBypass",
