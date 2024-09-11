@@ -10,8 +10,6 @@ const headers = {
   'Accept-Language': 'en-US,en;q=0.9',
   'Cache-Control': 'no-cache',
   'Connection': 'Upgrade',
-  'Host': 'crix-ws-first.upbit.com',
-  'Origin': 'https://upbit.com',
   'Pragma': 'no-cache',
   'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits',
   'Sec-WebSocket-Version': '13',
@@ -26,21 +24,18 @@ class WebSocketClient {
   private socket: WebSocket | null;
 
   constructor(ep: string, proxyUrl: string) {
-    this.url = 'wss://crix-ws-first.upbit.com/' + ep;
+    this.url =  ep;
     this.proxyUrl = proxyUrl;
     this.agent = new HttpsProxyAgent(proxyUrl);
     this.socket = null;
   }
 
   public connect(reconnectAttempts = 0): void {
-    this.socket = new WebSocket(this.url, { headers});
+    this.socket = new WebSocket(this.url, { headers , agent: this.agent });
 
-    const dataToSendAtOpen = [{ "ticket": "ram macbook" }, { "format": "PRTBUF_LIST" }];
 
     this.socket.onopen = () => {
-      this.socket?.send(JSON.stringify(dataToSendAtOpen));
       reconnectAttempts = 0;
-
       Utils.log('WebSocket connection established');
     };
 
@@ -72,17 +67,18 @@ class WebSocketClient {
   public sendPingMessage(interval: number): void {
     setInterval(() => {
         if(this.socket?.OPEN){
-            this.socket?.send('PING');
+          this.socket?.ping()
         }
 
     }, interval);
+    this.socket?.ping()
   }
 }
 
 function main(url: string, proxyUrl: string): void {
   const client = new WebSocketClient(url, proxyUrl);
+  client.sendPingMessage(5000);
   client.connect();
-  client.sendPingMessage(10000);
 }
 
 // Usage
@@ -91,6 +87,6 @@ const proxyUrl = 'http://127.0.0.1:8876';
 //     main(ep, proxyUrl);
 //   });
 
-["listing_host", "manager_host", "manager_s3_host", "static_host", "static_staking_host", "ccx_host", "ccx_oauth_host", "cs_host", "panda_host", "nft_host", "nft_resource_host", "quotation_master_beta_base", "quotation_master_sandbox_base", "quotation_websocket_sandbox_url", "quotation_websocket_beta_url", "crix_tv_api_sandbox_host", "crix_tv_api_beta_host", "quotation_api_sandbox_host"].forEach(ep => {
+["wss://nbstream.binance.com/market?uuid=9c1abb70-7379-4dbe-8498-10d9508d6f9b&lang=en&clienttype=web" , "wss://nbstream.binance.com/market?channel=emergency_announcement2_en" , "wss://nbstream.binance.com/market?channel=announcement_en"].forEach(ep => {
   main(ep, proxyUrl);
 });
