@@ -12,30 +12,28 @@ export interface IDModeResponse {
     body: string
     body_url: string
     attachments: any[]
-  }
+}
 
 interface IDModeGetNewsResponse extends IDModeResponse {
-    delay : number
-    cacheStatus : string
-    skipBypass : boolean
-}  
-
+    delay: number
+    cacheStatus: string
+    skipBypass: boolean
+}
 
 export class IDModeRequests {
     Main: Main;
-    CacheStats  :any = {revalidated : 0 ,hit : 0}
+    CacheStats: any = { revalidated: 0, hit: 0 }
     counter: number = 0;
 
     constructor(Main: Main) {
         this.Main = Main
     }
 
-    async getNews(latestAnnouncementId : number): Promise<any> {
+    async getNews(latestAnnouncementId: number, options: any = {}): Promise<any> {
         const userAgents = this.Main.getUserAgents() as Record<any, any>;
         const skipBypass = false
         const url = `https://api-manager.upbit.com/api/v1/announcements/` + latestAnnouncementId + `?&` + Utils.implyCacheBypass();
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const userAgentData = Utils.parseUserAgent(userAgent)
         Utils.log(`Getting Id Mode announcements`, "pending");
 
         const headers = {
@@ -51,8 +49,9 @@ export class IDModeRequests {
             'Sec-Ch-Ua-Platform': '"Windows"',
             'Sec-Fetch-Dest': 'empty',
             'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-site'
-          };
+            'Sec-Fetch-Site': 'same-site',
+            ...options.headers
+        };
 
         const payload = {
             Url: url,
@@ -67,18 +66,18 @@ export class IDModeRequests {
             const duration = endTime - startTime;  // Calculate the duration
 
             if (response && response.body) {
-                if(!response.body.success){
-                    const latestData  : IDModeResponse = response.body
-                    return {...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass};
-                }else if (response.body.success){
-                    const latestData  : IDModeResponse = response.body.data
-                    return {...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] :"Uncached" , skipBypass};
+                if (!response.body.success) {
+                    const latestData: IDModeResponse = response.body
+                    return { ...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] : "Uncached", skipBypass };
+                } else if (response.body.success) {
+                    const latestData: IDModeResponse = response.body.data
+                    return { ...latestData, delay: duration, cacheStatus: response?.headers.length > 0 ? response?.headers['cf-cache-status'] : "Uncached", skipBypass };
                 }
             }
             throw new Error(JSON.stringify(response.body))
-        } catch (err : any ) {
-            if(err && err.response && err.response.data && err.response.data.success === false){
-                 return {success : false }
+        } catch (err: any) {
+            if (err && err.response && err.response.data && err.response.data.success === false) {
+                return { success: false }
             }
             Utils.log(`Failed to get **ID MODE** announcements. UserAgent: ${userAgent}. Error: ${err.message}` + url, 'error');
         }

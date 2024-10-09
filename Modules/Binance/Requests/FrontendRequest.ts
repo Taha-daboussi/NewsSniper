@@ -44,10 +44,12 @@ export class FrontendRequest {
 
 
       if (response && response.body) {
-        var Data = JSON.parse(response.body.match(/"articles":?([\s\S]*?),"catalogs":/)[1])
-        if(Data[0]){
-          Utils.log('Binance Frontend Announcments fetched successfully | Cache ' + response.headers['x-cache'] + " | " +  response.headers['x-cache-proxy'] , 'success');
-          return {...Data[0] , delay : endTime - startTime , cacheStatus : (response.headers["x-cache"]  + " || " + response.headers['x-cache-proxy']) , skipBypass : false } 
+        const articlesMatch = response.body.matchAll(/"articles":([\s\S]*?),"catalogs":/g);
+        const articlesString = [...articlesMatch][0][1]; // Convert matchAll iterator to array and access the first match
+        const articles = JSON.parse(articlesString);
+        if(articles[0]){
+          Utils.log('Binance Frontend Announcments fetched successfully ' + navId , 'success');
+          return {...articles[0] , delay : endTime - startTime , cacheStatus : (response.headers["X-Cache"]  + " || " + response.headers['X-Cache-Proxy']) , skipBypass : false } 
         }
       }
 

@@ -143,8 +143,8 @@ export class Main extends MainHelper {
     }
 }
 
-const main = new Main();
+// const main = new Main();
 
 // Wait until it's 9pm in Tokyo
 
-main.runFrontendMode();
+// main.runFrontendMode();

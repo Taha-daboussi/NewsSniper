@@ -1,11 +1,13 @@
 {
   "name": "newssniper",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "binance": "npx ts-node ./Modules/Binance/Main.ts",
-    "upbit": "npx ts-node ./Modules/UpBit/Main.ts"
+    "upbit": "npx ts-node ./Modules/UpBit/Main.ts",
+    "start": "electron ."
+
   },
   "keywords": [],
   "author": "",

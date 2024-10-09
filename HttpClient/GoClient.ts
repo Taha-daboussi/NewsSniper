@@ -1,7 +1,8 @@
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { Utils } from '../Helpers/Utils';
-import { HttpsAgent } from './HttpsAgent';
 import { Proxy } from './Proxy';
 import { initGoClinet } from './initGoClient';
+import axios from 'axios';
 const _initGoClinet = new initGoClinet();
 interface Payload {
     method: string;
@@ -13,7 +14,7 @@ interface Payload {
     headersOrder?: string[];
     withoutCookieJar?: boolean;
     followRedirects?: boolean
-    timeout? : number
+    timeout?: number
 }
 interface IGoClient {
     sperationType: string;
@@ -40,7 +41,7 @@ export class GoClient implements IGoClient {
      * @param myProxyFile The proxy file
      * @returns The response object
      */
-    async sendRequest(requestPayloadData: Payload, myProxyFile: any = this.proxyFile , forcedProxy : string = '') {
+    async sendRequest(requestPayloadData: Payload, myProxyFile: any = this.proxyFile, forcedProxy: string = '') {
         let raw
         try {
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy)
@@ -48,40 +49,45 @@ export class GoClient implements IGoClient {
             const mySelectedProxy = this.Proxy.getMyProxy(this.proxyFile || myProxyFile);
             if (mySelectedProxy) requestPayloadData.proxy = mySelectedProxy
             if (requestPayloadData.sessionId === 'myProxy' && requestPayloadData.proxy) requestPayloadData.sessionId = requestPayloadData.proxy.toString()
-            if (!requestPayloadData.Url.includes('magiceden') && !requestPayloadData.Url.includes('opensea')  ) {
+            if (!requestPayloadData.Url.includes('magiceden') && !requestPayloadData.Url.includes('opensea')) {
                 process.env.NODE_ENV === 'development' ? requestPayloadData.proxy = 'http://127.0.0.1:8876' : ''
             }
             if (forcedProxy) {
                 try {
-                  // Attempt to create a new URL object with forcedProxy
-                  new URL(forcedProxy);
-                  // If successful, forcedProxy is a valid URL
-                  requestPayloadData.proxy = forcedProxy;
+                    // Attempt to create a new URL object with forcedProxy
+                    new URL(forcedProxy);
+                    // If successful, forcedProxy is a valid URL
+                    requestPayloadData.proxy = forcedProxy;
                 } catch (e) {
-                  // If an error is thrown, forcedProxy is not a valid URL
-                  console.error('Invalid URL:', forcedProxy);
+                    // If an error is thrown, forcedProxy is not a valid URL
+                    console.error('Invalid URL:', forcedProxy);
                 }
-              }
-               raw = {
-                sessionId: requestPayloadData.proxy?.toString(),
-                proxyUrl: requestPayloadData.proxy,
-                certificatePinningHosts: {},
+            }
+            let response;
+            let httpsAgent
+            if(requestPayloadData.proxy){
+                httpsAgent = new HttpsProxyAgent(requestPayloadData.proxy as string)
+            }
+            const configuration = {
                 headers: requestPayloadData.headers,
-                headerOrder: requestPayloadData.headersOrder,
-                requestUrl: requestPayloadData.Url,
-                requestMethod: requestPayloadData.method,
-                requestBody: requestPayloadData.body,
-                tlsClientIdentifier: 'chrome_117',
-                "skipRedirections": !requestPayloadData.followRedirects,
-                timeout : 60000 * 5
-            };
-            const response: any = await HttpsAgent.sendPostRequest(raw);
+                httpsAgent,
+                timeout: 1000,
+                signal: AbortSignal.timeout(1000)
+            }
+            if (requestPayloadData.method === "POST") {
+                response = await axios.post(requestPayloadData.Url, requestPayloadData.body , configuration)as any 
+            } else if (requestPayloadData.method === "GET") {
+                //@ts-ignore
+                response = await axios.get(requestPayloadData.Url,configuration) as any 
+            } else {
+                throw new Error('Method not supported')
+            }
+            response.body  =  response.data
             return Promise.resolve(response);
         } catch (e: any) {
             if (e.message && e?.message.includes('connect ECONNREFUSED 127.0.0.1')) {
                 _initGoClinet.initMyGoClient(false)
             }
-            Utils.log('Error while sending request ' + JSON.stringify(raw), 'error');
             return Promise.reject(e);
         }
     }
